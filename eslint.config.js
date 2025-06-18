@@ -5,7 +5,10 @@ module.exports = [
   ...eslintPluginAstro.configs['flat/recommended'], // In CommonJS, the `flat/` prefix is required.
   {
     rules: {
-      'no-console': 'warn'
+      'no-console': 'warn',
+      '@stylistic/no-tabs': 'off',
+			'import/first': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
     }
   }
 ];
