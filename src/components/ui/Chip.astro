@@ -1,4 +1,5 @@
 ---
+import Link from '@/components/ui/Link.astro';
 interface Props {
   tag: string;
   count?: number;
@@ -13,36 +14,41 @@ const { tag, count, href, variant = 'default', size = 'md' } = Astro.props;
 const variantClasses = {
   default: 'bg-slate-700 text-slate-300 hover:bg-slate-600',
   active: 'bg-blue-600 text-white',
-  secondary: 'bg-blue-900 text-blue-200 hover:bg-blue-800'
+  secondary: 'bg-blue-900 text-blue-200 hover:bg-blue-800',
 };
 
 // 尺寸樣式
 const sizeClasses = {
   sm: 'px-2 py-1 text-xs',
   md: 'px-3 py-1 text-sm',
-  lg: 'px-4 py-2 text-base'
+  lg: 'px-4 py-2 text-base',
 };
 
-const baseClasses = 'inline-flex items-center justify-between rounded-full font-medium transition-colors';
+const baseClasses =
+  'inline-flex items-center justify-between rounded-full font-medium transition-colors';
 const classes = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]}`;
 ---
 
-{href ? (
-  <a href={href} class={classes}>
-    <span>#{tag}</span>
-    {count && (
-      <span class={`ml-1 text-xs ${variant === 'active' ? 'text-blue-200' : 'text-slate-500'}`}>
-        {count}
-      </span>
-    )}
-  </a>
-) : (
-  <span class={classes}>
-    <span>#{tag}</span>
-    {count && (
-      <span class={`ml-1 text-xs ${variant === 'active' ? 'text-blue-200' : 'text-slate-500'}`}>
-        {count}
-      </span>
-    )}
-  </span>
-)}
+{
+  href ? (
+    <Link
+      href={href}
+      class={classes}>
+      <span>#{tag}</span>
+      {count && (
+        <span class={`ml-1 text-xs ${variant === 'active' ? 'text-blue-200' : 'text-slate-500'}`}>
+          {count}
+        </span>
+      )}
+    </Link>
+  ) : (
+    <span class={classes}>
+      <span>#{tag}</span>
+      {count && (
+        <span class={`ml-1 text-xs ${variant === 'active' ? 'text-blue-200' : 'text-slate-500'}`}>
+          {count}
+        </span>
+      )}
+    </span>
+  )
+}

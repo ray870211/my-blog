@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-
+import Link from '@/components/ui/Link.astro';
 // 獲取最近文章
 const recentPosts = await getCollection('blog', ({ data }) => {
   return data.draft !== true;
@@ -31,11 +31,11 @@ const currentPath = Astro.url.pathname;
       <div class='space-y-1'>
         {
           recentPosts.map(post => (
-            <a
+            <Link
               href={`/blog/${post.slug}`}
               class={`nav-item text-sm ${currentPath === `/blog/${post.slug}` ? 'active' : ''}`}>
               {post.data.title}
-            </a>
+            </Link>
           ))
         }
       </div>
@@ -67,19 +67,19 @@ const currentPath = Astro.url.pathname;
         class='space-y-1 mt-2'
         id='categories-content'
       >
-        <a
+        <Link
           href='/blog'
           class={`nav-item text-sm ${currentPath === '/blog' ? 'active' : ''}`}
         >
           近期文章
-        </a>
+        </Link>
         {
           recentPosts.slice(0, 3).map(post => (
-            <a
+            <Link
               href={`/blog/${post.slug}`}
               class={`nav-item text-sm ml-4 ${currentPath === `/blog/${post.slug}` ? 'active' : ''}`}>
               {post.data.title}
-            </a>
+            </Link>
           ))
         }
       </div>
@@ -92,11 +92,11 @@ const currentPath = Astro.url.pathname;
           <h3>標籤</h3>
           <div class='space-y-1'>
             {tags.slice(0, 6).map(tag => (
-              <a
+              <Link
                 href={`/blog/tag/${tag}`}
                 class={`nav-item text-sm ${currentPath === `/blog/tag/${tag}` ? 'active' : ''}`}>
                 #{tag}
-              </a>
+              </Link>
             ))}
           </div>
         </div>
@@ -107,19 +107,19 @@ const currentPath = Astro.url.pathname;
     <div class='sidebar-section'>
       <h3>關於</h3>
       <div class='space-y-1'>
-        <a
+        <Link
           href='/about'
           class={`nav-item text-sm ${currentPath === '/about' ? 'active' : ''}`}
         >
           關於我
-        </a>
-        <a
+        </Link>
+        <Link
           href='/rss.xml'
           class='nav-item text-sm'
           target='_blank'
         >
           RSS 訂閱
-        </a>
+        </Link>
       </div>
     </div>
   </nav>

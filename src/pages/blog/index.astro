@@ -147,10 +147,10 @@ const uniqueTags = Object.keys(tagCounts).sort();
               {uniqueTags.length > 0 ? (
                 <div class="space-y-3">
                   <div class="p-2 rounded hover:bg-slate-700 transition-colors">
-                    <a href="/blog" class="flex items-center justify-between text-slate-300">
+                    <Link href="/blog" class="flex items-center justify-between text-slate-300">
                       <span>全部文章</span>
                       <span class="text-sm text-slate-500">({allPosts.length})</span>
-                    </a>
+                    </Link>
                   </div>
                   
                   <div class="flex flex-wrap gap-2">

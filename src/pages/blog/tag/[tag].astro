@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header.astro';
 import Chip from '@/components/ui/Chip.astro';
 import { formatDate } from '@/utils/formatDate';
 import { getReadingTime, formatReadingTime } from '@/utils/getReadingTime';
+import Link from '@/components/ui/Link.astro';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('blog', ({ data }) => {
@@ -54,12 +55,12 @@ const uniqueTags = Object.keys(tagCounts).sort();
       <div class="mb-12">
         <h1 class="text-4xl font-bold text-white mb-4">#{tag}</h1>
         <p class="text-xl text-slate-300">共找到 {posts.length} 篇文章</p>
-        <a 
+        <Link 
           href="/blog" 
           class="inline-block mt-4 text-blue-400 hover:text-blue-300 transition-colors"
         >
           ← 返回所有文章
-        </a>
+        </Link>
       </div>
       
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -71,9 +72,9 @@ const uniqueTags = Object.keys(tagCounts).sort();
               <article class="bg-slate-800 rounded-lg p-6 mb-8 hover:bg-slate-700 transition-colors">
                 <header class="mb-4">
                   <h2 class="text-2xl font-bold text-white mb-3">
-                    <a href={`/blog/${post.slug}`} class="hover:text-blue-400 transition-colors">
+                    <Link href={`/blog/${post.slug}`} class="hover:text-blue-400 transition-colors">
                       {post.data.title}
-                    </a>
+                    </Link>
                   </h2>
                   
                   <!-- Meta Information -->
@@ -106,12 +107,12 @@ const uniqueTags = Object.keys(tagCounts).sort();
                   {post.data.description}
                 </p>
                 
-                <a 
+                <Link 
                   href={`/blog/${post.slug}`}
                   class="inline-block text-blue-400 hover:text-blue-300 font-medium transition-colors"
                 >
                   閱讀更多 →
-                </a>
+                </Link>
               </article>
             );
           })}
@@ -133,10 +134,10 @@ const uniqueTags = Object.keys(tagCounts).sort();
               {uniqueTags.length > 0 ? (
                 <div class="space-y-3">
                   <div class="p-2 rounded hover:bg-slate-700 transition-colors">
-                    <a href="/blog" class="flex items-center justify-between text-slate-300">
+                    <Link href="/blog" class="flex items-center justify-between text-slate-300">
                       <span>全部文章</span>
                       <span class="text-sm text-slate-500">({allPosts.length})</span>
-                    </a>
+                    </Link>
                   </div>
                   
                   <div class="flex flex-wrap gap-2">
