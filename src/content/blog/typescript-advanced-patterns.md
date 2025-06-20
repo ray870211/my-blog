@@ -9,6 +9,8 @@ tags:
 author: Ray
 ---
 
+此文章由 AI 生成，僅在測試使用
+
 # TypeScript 進階模式：掌握類型體操的藝術
 
 TypeScript 不僅僅是 JavaScript 的超集，它更是一個強大的類型系統。隨著前端應用的複雜度不斷提升，掌握 TypeScript 的進階特性已經成為現代前端開發者的必備技能。
@@ -31,7 +33,7 @@ TypeScript 不僅僅是 JavaScript 的超集，它更是一個強大的類型系
 type IsArray<T> = T extends any[] ? true : false;
 
 type Result1 = IsArray<string[]>; // true
-type Result2 = IsArray<number>;   // false
+type Result2 = IsArray<number>; // false
 ```
 
 ### 實際應用：API 響應處理
@@ -76,9 +78,7 @@ type Required<T> = {
 
 ```typescript
 type DeepReadonly<T> = {
-  readonly [P in keyof T]: T[P] extends object 
-    ? DeepReadonly<T[P]> 
-    : T[P];
+  readonly [P in keyof T]: T[P] extends object ? DeepReadonly<T[P]> : T[P];
 };
 
 interface Config {
@@ -174,7 +174,7 @@ type Overload<T extends (...args: any[]) => any> = T extends {
   (...args: infer A1): infer R1;
   (...args: infer A2): infer R2;
   (...args: infer A3): infer R3;
-} 
+}
   ? ((...args: A1) => R1) | ((...args: A2) => R2) | ((...args: A3) => R3)
   : T;
 ```
@@ -227,23 +227,19 @@ interface Actions {
 
 type ActionType = keyof Actions;
 type ActionCreators = {
-  [K in ActionType]: (
-    ...args: Actions[K] extends { payload: infer P }
-      ? [P]
-      : []
-  ) => Actions[K];
+  [K in ActionType]: (...args: Actions[K] extends { payload: infer P } ? [P] : []) => Actions[K];
 };
 
 const actions: ActionCreators = {
-  increment: (payload) => ({ type: 'increment', payload }),
-  decrement: (payload) => ({ type: 'decrement', payload }),
+  increment: payload => ({ type: 'increment', payload }),
+  decrement: payload => ({ type: 'decrement', payload }),
   reset: () => ({ type: 'reset' }),
-  setUser: (payload) => ({ type: 'setUser', payload }),
+  setUser: payload => ({ type: 'setUser', payload }),
 };
 
 // 使用時享受完整的類型提示和檢查
-actions.increment(5);     // ✅
-actions.reset();          // ✅
+actions.increment(5); // ✅
+actions.reset(); // ✅
 actions.setUser({ name: 'John', email: 'john@example.com' }); // ✅
 // actions.increment();   // ❌ 缺少參數
 ```
