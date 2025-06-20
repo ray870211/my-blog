@@ -4,7 +4,8 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://ray-blog.vercel.app/', // 更新為您的實際域名
+  site: 'https://ray0211.me',
+  base: '/my-blog',
   
   vite: {
     plugins: [tailwindcss()],
