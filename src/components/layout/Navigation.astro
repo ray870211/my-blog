@@ -1,0 +1,51 @@
+---
+import type { NavigationItem } from '@/types/global';
+
+const navItems: NavigationItem[] = [
+  { name: '首頁', href: '/' },
+  { name: '部落格', href: '/blog' },
+  { name: '關於', href: '/about' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<nav class='hidden md:flex space-x-8'>
+  {
+    navItems.map(item => (
+      <a
+        href={item.href}
+        class={`text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors ${
+          currentPath === item.href || currentPath.startsWith(item.href + '/')
+            ? 'text-blue-600 border-b-2 border-blue-600'
+            : ''
+        }`}
+        {...(item.external && { target: '_blank', rel: 'noopener noreferrer' })}>
+        {item.name}
+      </a>
+    ))
+  }
+</nav>
+
+<!-- Mobile menu button -->
+<div class='md:hidden'>
+  <button
+    type='button'
+    class='text-gray-700 hover:text-blue-600 p-2'
+    aria-label='開啟選單'
+  >
+    <svg
+      class='h-6 w-6'
+      fill='none'
+      viewBox='0 0 24 24'
+      stroke='currentColor'
+    >
+      <path
+        stroke-linecap='round'
+        stroke-linejoin='round'
+        stroke-width='2'
+        d='M4 6h16M4 12h16M4 18h16'
+      ></path>
+    </svg>
+  </button>
+</div>

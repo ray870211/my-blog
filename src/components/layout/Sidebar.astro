@@ -1,0 +1,140 @@
+---
+import { getCollection } from 'astro:content';
+
+// 獲取最近文章
+const recentPosts = await getCollection('blog', ({ data }) => {
+  return data.draft !== true;
+}).then(posts =>
+  posts
+    .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+    .slice(0, 5)
+);
+
+// 獲取所有標籤
+const allPosts = await getCollection('blog', ({ data }) => {
+  return data.draft !== true;
+});
+const tags = [...new Set(allPosts.flatMap(post => post.data.tags || []))];
+
+const currentPath = Astro.url.pathname;
+---
+
+<aside
+  class='w-64 bg-slate-800 min-h-screen fixed left-0 top-16 overflow-y-auto border-r border-slate-700 lg:translate-x-0 transition-transform duration-300 z-40'
+  id='sidebar'
+>
+  <!-- Navigation -->
+  <nav class='p-4'>
+    <!-- Recent Posts Section -->
+    <div class='sidebar-section'>
+      <h3>近期文章</h3>
+      <div class='space-y-1'>
+        {
+          recentPosts.map(post => (
+            <a
+              href={`/blog/${post.slug}`}
+              class={`nav-item text-sm ${currentPath === `/blog/${post.slug}` ? 'active' : ''}`}>
+              {post.data.title}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Categories Section -->
+    <div class='sidebar-section'>
+      <button
+        class='flex items-center justify-between w-full text-left'
+        id='categories-toggle'
+      >
+        <h3>Code</h3>
+        <svg
+          class='w-4 h-4 text-slate-400 transform transition-transform'
+          id='categories-icon'
+          viewBox='0 0 24 24'
+          fill='none'
+        >
+          <path
+            stroke='currentColor'
+            stroke-linecap='round'
+            stroke-linejoin='round'
+            stroke-width='2'
+            d='m19 9-7 7-7-7'
+          ></path>
+        </svg>
+      </button>
+      <div
+        class='space-y-1 mt-2'
+        id='categories-content'
+      >
+        <a
+          href='/blog'
+          class={`nav-item text-sm ${currentPath === '/blog' ? 'active' : ''}`}
+        >
+          近期文章
+        </a>
+        {
+          recentPosts.slice(0, 3).map(post => (
+            <a
+              href={`/blog/${post.slug}`}
+              class={`nav-item text-sm ml-4 ${currentPath === `/blog/${post.slug}` ? 'active' : ''}`}>
+              {post.data.title}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Tags Section -->
+    {
+      tags.length > 0 && (
+        <div class='sidebar-section'>
+          <h3>標籤</h3>
+          <div class='space-y-1'>
+            {tags.slice(0, 6).map(tag => (
+              <a
+                href={`/blog/tag/${tag}`}
+                class={`nav-item text-sm ${currentPath === `/blog/tag/${tag}` ? 'active' : ''}`}>
+                #{tag}
+              </a>
+            ))}
+          </div>
+        </div>
+      )
+    }
+
+    <!-- About Section -->
+    <div class='sidebar-section'>
+      <h3>關於</h3>
+      <div class='space-y-1'>
+        <a
+          href='/about'
+          class={`nav-item text-sm ${currentPath === '/about' ? 'active' : ''}`}
+        >
+          關於我
+        </a>
+        <a
+          href='/rss.xml'
+          class='nav-item text-sm'
+          target='_blank'
+        >
+          RSS 訂閱
+        </a>
+      </div>
+    </div>
+  </nav>
+</aside>
+
+<script>
+  // Categories toggle functionality
+  const toggle = document.getElementById('categories-toggle');
+  const content = document.getElementById('categories-content');
+  const icon = document.getElementById('categories-icon');
+
+  if (toggle && content && icon) {
+    toggle.addEventListener('click', () => {
+      content.classList.toggle('hidden');
+      icon.classList.toggle('rotate-180');
+    });
+  }
+</script>

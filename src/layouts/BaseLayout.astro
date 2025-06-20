@@ -1,0 +1,101 @@
+---
+import '../styles/global.css';
+import type { SEOProps } from '@/types/global';
+
+interface Props extends SEOProps {
+  class?: string;
+}
+
+const { title, description, image, canonical, type = 'website', class: className } = Astro.props;
+
+const canonicalURL = canonical || new URL(Astro.url.pathname, Astro.site);
+const socialImage = image ? new URL(image, Astro.site) : undefined;
+---
+
+<!doctype html>
+<html lang='zh-TW'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta
+      name='viewport'
+      content='width=device-width, initial-scale=1.0'
+    />
+    <link
+      rel='icon'
+      type='image/svg+xml'
+      href='/favicon.svg'
+    />
+    <meta
+      name='generator'
+      content={Astro.generator}
+    />
+
+    <!-- SEO Meta Tags -->
+    <title>{title}</title>
+    <meta
+      name='description'
+      content={description}
+    />
+    <link
+      rel='canonical'
+      href={canonicalURL}
+    />
+
+    <!-- Open Graph -->
+    <meta
+      property='og:type'
+      content={type}
+    />
+    <meta
+      property='og:title'
+      content={title}
+    />
+    <meta
+      property='og:description'
+      content={description}
+    />
+    <meta
+      property='og:url'
+      content={canonicalURL}
+    />
+    <meta
+      property='og:site_name'
+      content="Ray's Blog"
+    />
+    {
+      socialImage && (
+        <meta
+          property='og:image'
+          content={socialImage}
+        />
+      )
+    }
+
+    <!-- Twitter Card -->
+    <meta
+      name='twitter:card'
+      content='summary_large_image'
+    />
+    <meta
+      name='twitter:title'
+      content={title}
+    />
+    <meta
+      name='twitter:description'
+      content={description}
+    />
+    {
+      socialImage && (
+        <meta
+          name='twitter:image'
+          content={socialImage}
+        />
+      )
+    }
+
+    <slot name='head' />
+  </head>
+  <body class={className}>
+    <slot />
+  </body>
+</html>
