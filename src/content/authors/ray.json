@@ -1,0 +1,10 @@
+{
+  "name": "Ray",
+  "bio": "熱愛技術分享的軟體工程師，專注於前端開發和使用者體驗設計。",
+  "avatar": "/images/avatar.png",
+  "social": {
+    "github": "https://github.com/ray",
+    "twitter": "https://twitter.com/ray",
+    "email": "ray@example.com"
+  }
+}
