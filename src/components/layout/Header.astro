@@ -1,36 +1,36 @@
 ---
-
+import Link from '@/components/ui/Link.astro';
 ---
 
 <header
-  class='bg-slate-800 dark:bg-slate-800 bg-white/90 border-b border-slate-700 dark:border-slate-700 border-gray-200 h-16 fixed top-0 left-0 right-0 z-50 backdrop-blur-sm'
+  class='dark:bg-slate-800 bg-white/90 border-b dark:border-slate-700 border-gray-200 h-16 fixed top-0 left-0 right-0 z-50 backdrop-blur-sm'
 >
   <div class='px-6 h-full flex items-center justify-between w-full'>
     <!-- Blog Title -->
     <div class='p-6'>
-      <h1 class='text-xl font-bold text-white dark:text-white text-gray-900'>
-        <a
+      <h1 class='text-xl font-bold dark:text-white text-gray-900'>
+        <Link
           href='/'
           class='hover:text-blue-400 transition-colors'
-          >Ray blog</a
+          >Ray blog</Link
         >
       </h1>
     </div>
     <!-- Navigation Links -->
     <nav class='flex space-x-6'>
-      <a
+      <Link
         href='/blog'
-        class='text-slate-300 dark:text-slate-300 text-gray-600 hover:text-white dark:hover:text-white hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors'
+        class='dark:text-slate-300 text-gray-600 hover:text-white dark:hover:text-white hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors'
       >
         Blog
-      </a>
+      </Link>
     </nav>
 
     <!-- Social Icons -->
     <div class='flex items-center space-x-4'>
       <a
         href='https://github.com/ray'
-        class='text-slate-400 dark:text-slate-400 text-gray-500 hover:text-white dark:hover:text-white hover:text-gray-700 transition-colors'
+        class='dark:text-slate-400 text-gray-500 hover:text-white dark:hover:text-white hover:text-gray-700 transition-colors'
         target='_blank'
         rel='noopener noreferrer'
       >
@@ -46,7 +46,7 @@
       </a>
       <a
         href='https://linkedin.com/in/ray'
-        class='text-slate-400 dark:text-slate-400 text-gray-500 hover:text-white dark:hover:text-white hover:text-gray-700 transition-colors'
+        class='dark:text-slate-400 text-gray-500 dark:hover:text-white hover:text-gray-700 transition-colors'
         target='_blank'
         rel='noopener noreferrer'
       >
@@ -62,7 +62,7 @@
       </a>
       <a
         href='https://twitter.com/ray'
-        class='text-slate-400 dark:text-slate-400 text-gray-500 hover:text-white dark:hover:text-white hover:text-gray-700 transition-colors'
+        class='dark:text-slate-400 text-gray-500 dark:hover:text-white hover:text-gray-700 transition-colors'
         target='_blank'
         rel='noopener noreferrer'
       >

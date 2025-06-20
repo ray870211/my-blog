@@ -1,0 +1,29 @@
+---
+import { withBase, isExternalLink } from '@/utils/link';
+
+interface Props {
+  href: string;
+  class?: string;
+  target?: string;
+  rel?: string;
+  'data-astro-prefetch'?: boolean;
+}
+
+const { href, class: className = '', target, rel, ...rest } = Astro.props;
+
+const resolvedHref = withBase(href);
+const isExternal = isExternalLink(href);
+
+const safeTarget = target || (isExternal ? '_blank' : undefined);
+const safeRel = rel || (isExternal ? 'noopener noreferrer' : undefined);
+---
+
+<a
+  href={resolvedHref}
+  class={className}
+  target={safeTarget}
+  rel={safeRel}
+  {...rest}
+>
+  <slot />
+</a>

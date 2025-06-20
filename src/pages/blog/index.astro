@@ -4,6 +4,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
 import Chip from '@/components/ui/Chip.astro';
 import GlowCard from '@/components/ui/GlowCard.astro';
+import Link from '@/components/ui/Link.astro';
 import { formatDate } from '@/utils/formatDate';
 import { getReadingTime, formatReadingTime } from '@/utils/getReadingTime';
 
@@ -60,9 +61,9 @@ const uniqueTags = Object.keys(tagCounts).sort();
                       class="text-2xl font-bold dark:text-white text-gray-900 mb-3"
                       style={`view-transition-name: post-title-${post.slug}`}
                     >
-                      <a href={`/blog/${post.slug}`} class="hover:text-blue-400 transition-colors">
+                      <Link href={`/blog/${post.slug}`} class="hover:text-blue-400 transition-colors">
                         {post.data.title}
-                      </a>
+                      </Link>
                     </h2>
                     
                     <!-- Meta Information -->
@@ -113,12 +114,12 @@ const uniqueTags = Object.keys(tagCounts).sort();
                     {post.data.description}
                   </p>
                   
-                  <a 
+                  <Link 
                     href={`/blog/${post.slug}`}
                     class="inline-block text-blue-400 hover:text-blue-300 font-medium transition-colors"
                   >
                     閱讀更多 →
-                  </a>
+                  </Link>
                 </article>
               </GlowCard>
             );
