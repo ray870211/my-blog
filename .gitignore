@@ -2,3 +2,5 @@ node_modules
 .astro
 .cursorrules
 docs
+
+CLAUDE.md
