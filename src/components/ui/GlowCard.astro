@@ -1,0 +1,181 @@
+---
+interface Props {
+  class?: string;
+  glowColor?: string;
+  glowIntensity?: number;
+}
+
+const {
+  class: className = '',
+  glowColor = 'rgba(59, 130, 246, 0.4)', // 預設藍色光暈
+  glowIntensity = 400,
+} = Astro.props;
+---
+
+<div
+  class={`glow-card ${className}`}
+  data-glow-color={glowColor}
+  data-glow-intensity={glowIntensity}
+>
+  <div class='glow-card__content'>
+    <slot />
+  </div>
+</div>
+
+<script>
+  class GlowCard {
+    card: HTMLElement;
+    glowColor: string;
+    glowIntensity: number;
+
+    constructor(element: HTMLElement) {
+      this.card = element;
+      this.glowColor = element.dataset.glowColor || 'rgba(59, 130, 246, 0.15)';
+      this.glowIntensity = parseInt(element.dataset.glowIntensity || '600');
+
+      this.init();
+    }
+
+    init() {
+      let animationId: number | null = null;
+
+      const updateGlow = (e: MouseEvent) => {
+        // 取消之前的動畫請求
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+        }
+
+        animationId = requestAnimationFrame(() => {
+          const rect = this.card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          this.card.style.setProperty('--glow-x', `${x}px`);
+          this.card.style.setProperty('--glow-y', `${y}px`);
+          this.card.style.setProperty('--glow-opacity', '1');
+
+          animationId = null;
+        });
+      };
+
+      const hideGlow = () => {
+        // 確保取消任何進行中的動畫
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+          animationId = null;
+        }
+        
+        // 立即隱藏光暈
+        this.card.style.setProperty('--glow-opacity', '0');
+      };
+
+      const showGlow = () => {
+        // 滑鼠進入時準備顯示光暈
+        this.card.style.setProperty('--glow-opacity', '0');
+      };
+
+      // 事件監聽
+      this.card.addEventListener('mouseenter', showGlow);
+      this.card.addEventListener('mousemove', updateGlow);
+      this.card.addEventListener('mouseleave', hideGlow);
+
+      // 初始化 CSS 變數
+      this.card.style.setProperty('--glow-color', this.glowColor);
+      this.card.style.setProperty('--glow-size', `${this.glowIntensity}px`);
+      this.card.style.setProperty('--glow-opacity', '0');
+    }
+  }
+
+  // 初始化所有 glow 卡片
+  function initGlowCards() {
+    const glowCards = document.querySelectorAll('.glow-card');
+    glowCards.forEach(card => {
+      // 避免重複初始化
+      if (!(card as any).__glowCardInitialized) {
+        new GlowCard(card as HTMLElement);
+        (card as any).__glowCardInitialized = true;
+      }
+    });
+  }
+
+  // 處理初始載入和 View Transitions
+  document.addEventListener('DOMContentLoaded', initGlowCards);
+  
+  // 處理 Astro View Transitions
+  document.addEventListener('astro:page-load', () => {
+    setTimeout(initGlowCards, 100); // 稍微延遲確保 DOM 完全載入
+  });
+</script>
+
+<style>
+  .glow-card {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+    /* CSS 變數初始化 */
+    --glow-x: 50%;
+    --glow-y: 50%;
+    --glow-size: 600px;
+    --glow-color: rgba(59, 130, 246, 0.4);
+    --glow-opacity: 0;
+  }
+
+  .glow-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+
+    background: radial-gradient(
+      var(--glow-size) circle at var(--glow-x) var(--glow-y),
+      var(--glow-color),
+      transparent 30%
+    );
+
+    opacity: var(--glow-opacity);
+    transition: opacity 0.2s ease-out;
+  }
+
+  .glow-card__content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+  }
+
+  /* 懸停時的額外效果 */
+  .glow-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 10px 25px rgba(0, 0, 0, 0.1),
+      0 0 20px rgba(255, 255, 255, 0.1),
+      0 0 40px rgba(255, 255, 255, 0.05);
+  }
+
+  /* 多重光暈效果 (可選) */
+  .glow-card--multi::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+
+    background: radial-gradient(
+      calc(var(--glow-size) * 0.7) circle at var(--glow-x) var(--glow-y),
+      rgba(255, 255, 255, 0.05),
+      transparent 50%
+    );
+
+    opacity: var(--glow-opacity);
+    transition: opacity 0.2s ease-out;
+  }
+</style>

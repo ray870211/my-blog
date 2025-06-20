@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
 import Chip from '@/components/ui/Chip.astro';
+import GlowCard from '@/components/ui/GlowCard.astro';
 
 // 獲取最近的幾篇文章
 const allPosts = await getCollection('blog', ({ data }) => {
@@ -17,7 +18,7 @@ const recentPosts = allPosts
 <BaseLayout
   title="Ray's Blog - 技術分享與生活記錄"
   description='歡迎來到我的個人部落格，分享技術心得、生活感悟和學習筆記。'
-  class='min-h-screen bg-slate-900'
+  class='min-h-screen'
 >
   <!-- Fixed Header -->
   <Header />
@@ -26,29 +27,30 @@ const recentPosts = allPosts
   <main class='mt-16'>
     <div class='max-w-4xl mx-auto px-8 py-12'>
       <!-- Hero Section with Introduction -->
-      <section class='text-center mb-16'>
+      <section class='mb-16'>
         <div class='mb-8'>
-          <img
+          <!-- <img
             src='/images/avatar.svg'
             alt='Ray Avatar'
             class='w-32 h-32 rounded-full mx-auto mb-6 border-4 border-blue-500'
-          />
+          /> -->
         </div>
 
-        <h1 class='text-5xl font-bold text-white mb-6'>Hi, 我是 Ray</h1>
+        <div class='max-w-2xl mx-auto text-center'>
+          <h1 class='text-2xl font-bold text-white dark:text-white mb-6'>Ray</h1>
 
-        <p class='text-xl text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed'>
-          一名熱愛技術的軟體工程師，專注於前端開發和使用者體驗設計。 在這裡分享我的技術學習心得、AI
-          探索過程，以及遠端工作的生活感悟。
-        </p>
-        <p class='text-xl text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed'>
-          這個部落格就是我拿來整理思緒、紀錄學習、偶爾碎念的平台。沒有一定多專業，但盡量寫清楚為什麼這樣做、為什麼選這個工具，能幫到正在摸索的人就更好了。
-        </p>
+          <p class='text-md text-slate-300 dark:text-slate-300 mb-8 leading-relaxed'>
+            喜歡前端的工程師。 在這裡分享我的技術學習心得、AI 探索過程，以及一些些生活感悟。
+          </p>
+          <p class='text-md text-slate-300 dark:text-slate-300 mb-8 leading-relaxed'>
+            這個部落格就是我拿來整理思緒、紀錄學習、偶爾碎念的地方。沒有一定多專業，但盡量寫清楚為什麼這樣做、為什麼選這個工具，能幫到正在摸索的人就更好了。
+          </p>
+        </div>
 
         <div class='flex justify-center space-x-4 mb-8'>
           <a
             href='/blog'
-            class='bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors'
+            class='bg-black opacity-70 text-white px-8 py-3 rounded-lg font-semibold hover:bg-sky-800 transition-colors'
           >
             瀏覽文章
           </a>
@@ -111,45 +113,55 @@ const recentPosts = allPosts
       {
         recentPosts.length > 0 && (
           <section>
-            <h2 class='text-3xl font-bold text-white mb-8 text-center'>最新文章</h2>
+            <h2 class='text-3xl font-bold dark:text-white text-gray-900 mb-8 text-center'>
+              最新文章
+            </h2>
             <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12'>
               {recentPosts.map(post => (
-                <article class='bg-slate-800 rounded-lg p-6 hover:bg-slate-700 transition-colors'>
-                  <h3 class='text-xl font-semibold text-white mb-3'>
-                    <a
-                      href={`/blog/${post.slug}`}
-                      class='hover:text-blue-400 transition-colors'>
-                      {post.data.title}
-                    </a>
-                  </h3>
-                  <p class='text-slate-300 text-sm mb-4 line-clamp-3'>{post.data.description}</p>
-                  <div class='flex items-center justify-between text-xs text-slate-400'>
-                    <time datetime={post.data.date.toISOString()}>
-                      {new Intl.DateTimeFormat('zh-TW', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      }).format(post.data.date)}
-                    </time>
-                    {post.data.tags && post.data.tags.length > 0 && (
-                      <Chip
-                        tag={post.data.tags[0]}
-                        href={`/blog/tag/${post.data.tags[0]}`}
-                        variant='secondary'
-                        size='sm'
-                      />
-                    )}
-                  </div>
-                </article>
+                <GlowCard
+                  class='min-h-[200px]'
+                  glowColor='rgba(221, 130, 246, 1)'
+                  glowIntensity={600}>
+                  <article class='dark:bg-slate-800/90 bg-white/90 backdrop-blur-sm rounded-lg p-6 h-full border dark:border-slate-700/50 border-gray-200/50 transition-all duration-300'>
+                    <h3
+                      class='text-xl font-semibold dark:text-white text-gray-900 mb-3'
+                      style={`view-transition-name: post-title-${post.slug}`}>
+                      <a
+                        href={`/blog/${post.slug}`}
+                        class='hover:text-blue-400 transition-colors'>
+                        {post.data.title}
+                      </a>
+                    </h3>
+                    <p class='dark:text-slate-300 text-gray-600 text-sm mb-4 line-clamp-3'>
+                      {post.data.description}
+                    </p>
+                    <dl class='flex items-center justify-between text-xs dark:text-slate-400 text-gray-500 mt-auto'>
+                      <div class='flex items-center space-x-1'>
+                        <dt class='sr-only'>發布日期</dt>
+                        <dd>
+                          <time
+                            datetime={post.data.date.toISOString()}
+                            style={`view-transition-name: post-date-${post.slug}`}>
+                            {new Intl.DateTimeFormat('zh-TW', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            }).format(post.data.date)}
+                          </time>
+                        </dd>
+                      </div>
+                      {post.data.tags && post.data.tags.length > 0 && (
+                        <Chip
+                          tag={post.data.tags[0]}
+                          href={`/blog/tag/${post.data.tags[0]}`}
+                          variant='secondary'
+                          size='sm'
+                        />
+                      )}
+                    </dl>
+                  </article>
+                </GlowCard>
               ))}
-            </div>
-
-            <div class='text-center'>
-              <a
-                href='/blog'
-                class='inline-block bg-slate-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-slate-600 transition-colors'>
-                查看所有文章
-              </a>
             </div>
           </section>
         )

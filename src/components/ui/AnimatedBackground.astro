@@ -1,0 +1,336 @@
+---
+// 動畫背景組件 - 星空與白天場景
+---
+
+<!-- 星空背景容器 -->
+<div
+  id='animated-background'
+  class='fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden'
+  data-astro-transition-persist
+>
+  <!-- 夜空場景 -->
+  <div
+    id='night-sky'
+    class='absolute w-[150%] h-[150%] -left-[25%] -top-[25%]'
+  >
+    <!-- 深度漸層背景 -->
+    <div
+      class='absolute inset-0 w-full h-full bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900'
+    >
+    </div>
+
+    <!-- 星星容器 -->
+    <div
+      id='stars-container'
+      class='absolute inset-0 w-full h-full overflow-hidden'
+    >
+      <!-- 星星會由 JavaScript 動態生成 -->
+    </div>
+
+    <!-- 銀河效果 -->
+    <div
+      id='milky-way'
+      class='absolute top-0 left-[20%] w-[60%] h-full opacity-20 transform rotate-12'
+      style='background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);'
+    >
+    </div>
+
+    <!-- 流星效果 -->
+    <div
+      id='meteors-container'
+      class='absolute inset-0 w-full h-full overflow-hidden'
+    >
+      <!-- 流星會由 JavaScript 動態生成 -->
+    </div>
+  </div>
+</div>
+
+<script>
+  import { gsap } from 'gsap';
+
+  class StarField {
+    stars;
+    meteors;
+    mouseX;
+    mouseY;
+    animationFrame;
+    nightSky;
+    starsContainer;
+    meteorsContainer;
+    moon;
+    milkyWay;
+
+    constructor() {
+      this.stars = [];
+      this.meteors = [];
+      this.mouseX = 0;
+      this.mouseY = 0;
+      this.animationFrame = null;
+
+      this.initElements();
+      this.createStars();
+      this.setupEventListeners();
+      this.startAnimations();
+    }
+
+    initElements() {
+      this.nightSky = document.getElementById('night-sky');
+      this.starsContainer = document.getElementById('stars-container');
+      this.meteorsContainer = document.getElementById('meteors-container');
+      this.moon = document.getElementById('moon');
+      this.milkyWay = document.getElementById('milky-way');
+    }
+
+    createStars() {
+      const starCount = 2000;
+
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'absolute rounded-full';
+
+        // 星星基本屬性
+        const size = Math.random() * 3 + 0.5;
+        const x = Math.random() * 150; // 0-150% 覆蓋整個150%的畫布
+        const y = Math.random() * 150;
+
+        // 創造深度層次
+        const depth = Math.random(); // 0-1，0是最遠，1是最近
+        const opacity = 0.3 + depth * 0.7;
+        const actualSize = size * (0.5 + depth * 0.5);
+
+        // 星星顏色：根據溫度決定顏色
+        const starTypes = [
+          { color: '#ffffff', temp: 'hot' }, // 白色 - 最熱
+          { color: '#ffe4b5', temp: 'warm' }, // 暖白色
+          { color: '#ffccaa', temp: 'cool' }, // 橙色
+          { color: '#e6f3ff', temp: 'cold' }, // 藍白色 - 最冷
+        ];
+        const starType = starTypes[Math.floor(Math.random() * starTypes.length)];
+
+        star.style.width = actualSize + 'px';
+        star.style.height = actualSize + 'px';
+        star.style.left = x + '%';
+        star.style.top = y + '%';
+        star.style.opacity = opacity.toString();
+        star.style.backgroundColor = starType.color;
+        star.style.boxShadow = `0 0 ${actualSize * 4}px ${starType.color}80`;
+        // 關鍵性能優化
+        star.style.willChange = 'transform, opacity';
+        star.style.transform = 'translateZ(0)'; // 強制 GPU 加速
+
+        this.starsContainer.appendChild(star);
+        this.stars.push({
+          element: star,
+          originalX: x,
+          originalY: y,
+          size: actualSize,
+          baseOpacity: opacity,
+          depth: depth,
+          color: starType.color,
+          twinkleSpeed: Math.random() * 4 + 2,
+          twinklePhase: Math.random() * Math.PI * 2,
+        });
+      }
+    }
+
+    createMeteor() {
+      const meteor = document.createElement('div');
+      meteor.className = 'absolute pointer-events-none';
+
+      this.meteorsContainer.appendChild(meteor);
+
+      // 流星動畫
+    }
+
+    setupEventListeners() {
+      // 優化：限制滑鼠事件觸發頻率
+      let mouseTimeout;
+      document.addEventListener('mousemove', e => {
+        this.mouseX = (e.clientX / window.innerWidth) * 150;
+        this.mouseY = (e.clientY / window.innerHeight) * 150;
+
+        // 使用防抖來減少更新頻率
+        clearTimeout(mouseTimeout);
+        mouseTimeout = setTimeout(() => {
+          this.updateMouseEffects();
+        }, 50); // 50ms 防抖
+      });
+
+      // 視窗大小改變時重新初始化
+      window.addEventListener('resize', () => {
+        this.handleResize();
+      });
+    }
+
+    handleResize() {
+      // 重新計算星星位置
+      this.stars.forEach(star => {
+        const newX = Math.random() * 150;
+        const newY = Math.random() * 150;
+        star.originalX = newX;
+        star.originalY = newY;
+        star.element.style.left = newX + '%';
+        star.element.style.top = newY + '%';
+      });
+    }
+
+    startAnimations() {
+      // 星星閃爍動畫 - 使用更高效的批次動畫
+      const timeline = gsap.timeline({ repeat: -1 });
+
+      this.stars.forEach((star, index) => {
+        // 所有星星都閃爍，但使用共享時間軸
+        timeline.to(
+          star.element,
+          {
+            opacity: star.baseOpacity * 0.3,
+            duration: star.twinkleSpeed,
+            ease: 'sine.inOut',
+            yoyo: true,
+            repeat: 1,
+          },
+          Math.random() * 3
+        );
+
+        // 部分星星有脈動效果
+        if (Math.random() < 0.15) {
+          timeline.to(
+            star.element,
+            {
+              scale: 1.4,
+              duration: star.twinkleSpeed * 1.5,
+              ease: 'sine.inOut',
+              yoyo: true,
+              repeat: 1,
+            },
+            Math.random() * 5
+          );
+        }
+      });
+
+      // 銀河緩慢旋轉
+      gsap.to(this.milkyWay, {
+        rotation: 360,
+        duration: 360, // 6 分鐘一圈
+        repeat: -1,
+        ease: 'none',
+      });
+
+      // 星空整體緩慢旋轉
+      gsap.to(this.starsContainer, {
+        rotation: 360,
+        duration: 360, // 6 分鐘一圈，讓旋轉更明顯
+        repeat: -1,
+        ease: 'none',
+        transformOrigin: 'center center',
+      });
+    }
+
+    updateMouseEffects() {
+      // 視差效果 - 根據滑鼠位置調整星空
+      const parallaxX = (this.mouseX - 50) * 0.02;
+      const parallaxY = (this.mouseY - 50) * 0.02;
+
+      // 整個夜空的輕微移動
+      gsap.to(this.nightSky, {
+        x: parallaxX * 10,
+        y: parallaxY * 10,
+        duration: 2,
+        ease: 'power2.out',
+      });
+
+      // 星星根據深度有不同的視差效果
+      this.stars.forEach(star => {
+        const depthFactor = star.depth; // 0-1，越近視差效果越明顯
+        const moveX = parallaxX * depthFactor * 20;
+        const moveY = parallaxY * depthFactor * 20;
+
+        gsap.to(star.element, {
+          x: moveX,
+          y: moveY,
+          duration: 1.5,
+          ease: 'power2.out',
+        });
+      });
+
+      // 銀河的視差效果
+      gsap.to(this.milkyWay, {
+        x: parallaxX * 15,
+        y: parallaxY * 15,
+        duration: 2.5,
+        ease: 'power2.out',
+      });
+    }
+  }
+
+  // 初始化星空背景
+  function initStarField() {
+    // 如果背景容器被持久化且已經有星星，就不要重新初始化
+    const backgroundElement = document.getElementById('animated-background');
+    const starsContainer = document.getElementById('stars-container');
+
+    if (backgroundElement && starsContainer && starsContainer.children.length > 0) {
+      // 背景已經存在且有星星，只需要確保全域實例存在
+      if (!(window as any).starFieldInstance) {
+        // 背景存在但實例遺失，重新綁定事件但不重新創建星星
+        (window as any).starFieldInstance = { persisted: true };
+      }
+      return;
+    }
+
+    // 避免重複初始化
+    if ((window as any).starFieldInstance && !(window as any).starFieldInstance.persisted) {
+      return;
+    }
+
+    (window as any).starFieldInstance = new StarField();
+  }
+
+  // 處理初始載入
+  document.addEventListener('DOMContentLoaded', initStarField);
+
+  // 處理 Astro View Transitions
+  document.addEventListener('astro:page-load', () => {
+    // 由於背景是持久化的，只需要檢查是否需要重新連接
+    setTimeout(initStarField, 50);
+  });
+</script>
+
+<style>
+  /* 星空容器硬體加速 */
+  #stars-container {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    /* 啟用 GPU 合成層 */
+    transform-style: preserve-3d;
+  }
+
+  /* 星星元素優化 */
+  #stars-container div {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    /* 使用 GPU 渲染 */
+    transform: translateZ(0);
+  }
+
+  /* 銀河效果 */
+  #milky-way {
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  /* 整體背景優化 */
+  #animated-background {
+    will-change: transform;
+    transform: translateZ(0);
+    /* 開啟硬體合成 */
+    transform-style: preserve-3d;
+  }
+
+  /* 夜空場景優化 */
+  #night-sky {
+    will-change: transform;
+    transform: translateZ(0);
+  }
+</style>

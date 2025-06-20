@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
 import Chip from '@/components/ui/Chip.astro';
+import GlowCard from '@/components/ui/GlowCard.astro';
 import { formatDate } from '@/utils/formatDate';
 import { getReadingTime, formatReadingTime } from '@/utils/getReadingTime';
 
@@ -29,7 +30,7 @@ const uniqueTags = Object.keys(tagCounts).sort();
 <BaseLayout 
   title="部落格 - Ray's Blog"
   description="分享技術心得與生活感悟的部落格文章"
-  class="min-h-screen bg-slate-900"
+  class="min-h-screen"
 >
   <!-- Fixed Header -->
   <Header />
@@ -48,51 +49,78 @@ const uniqueTags = Object.keys(tagCounts).sort();
           {sortedPosts.map((post) => {
             const readingTime = getReadingTime(post.body);
             return (
-              <article class="bg-slate-800 rounded-lg p-6 mb-8 hover:bg-slate-700 transition-colors">
-                <header class="mb-4">
-                  <h2 class="text-2xl font-bold text-white mb-3">
-                    <a href={`/blog/${post.slug}`} class="hover:text-blue-400 transition-colors">
-                      {post.data.title}
-                    </a>
-                  </h2>
+              <GlowCard 
+                class="mb-8" 
+                glowColor="rgba(244, 102, 241, 0.8)"
+                glowIntensity={1200}
+              >
+                <article class="dark:bg-slate-800/90 bg-white/90 backdrop-blur-sm rounded-lg p-6 border dark:border-slate-700/50 border-gray-200/50 transition-all duration-300">
+                  <header class="mb-4">
+                    <h2 
+                      class="text-2xl font-bold dark:text-white text-gray-900 mb-3"
+                      style={`view-transition-name: post-title-${post.slug}`}
+                    >
+                      <a href={`/blog/${post.slug}`} class="hover:text-blue-400 transition-colors">
+                        {post.data.title}
+                      </a>
+                    </h2>
+                    
+                    <!-- Meta Information -->
+                    <dl class="flex items-center text-sm dark:text-slate-400 text-gray-600 mb-4 space-x-4">
+                      <div class="flex items-center space-x-1">
+                        <dt class="sr-only">作者</dt>
+                        <dd style={`view-transition-name: post-author-${post.slug}`}>
+                          作者: {post.data.author}
+                        </dd>
+                      </div>
+                      <span>•</span>
+                      <div class="flex items-center space-x-1">
+                        <dt class="sr-only">發布日期</dt>
+                        <dd>
+                          <time 
+                            datetime={post.data.date.toISOString()}
+                            style={`view-transition-name: post-date-${post.slug}`}
+                          >
+                            {formatDate(post.data.date)}
+                          </time>
+                        </dd>
+                      </div>
+                      <span>•</span>
+                      <div class="flex items-center space-x-1">
+                        <dt class="sr-only">閱讀時間</dt>
+                        <dd style={`view-transition-name: post-reading-time-${post.slug}`}>
+                          {formatReadingTime(readingTime)}
+                        </dd>
+                      </div>
+                    </dl>
+                    
+                    <!-- Tags -->
+                    {post.data.tags && post.data.tags.length > 0 && (
+                      <div class="flex flex-wrap gap-2 mb-4">
+                        {post.data.tags.map((tag) => (
+                          <Chip 
+                            tag={tag}
+                            href={`/blog/tag/${tag}`}
+                            variant="secondary"
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </header>
                   
-                  <!-- Meta Information -->
-                  <div class="flex items-center text-sm text-slate-400 mb-4 space-x-4">
-                    <span>作者: {post.data.author}</span>
-                    <span>•</span>
-                    <time datetime={post.data.date.toISOString()}>
-                      {formatDate(post.data.date)}
-                    </time>
-                    <span>•</span>
-                    <span>{formatReadingTime(readingTime)}</span>
-                  </div>
+                  <!-- Description -->
+                  <p class="dark:text-slate-300 text-gray-700 leading-relaxed mb-4">
+                    {post.data.description}
+                  </p>
                   
-                  <!-- Tags -->
-                  {post.data.tags && post.data.tags.length > 0 && (
-                    <div class="flex flex-wrap gap-2 mb-4">
-                      {post.data.tags.map((tag) => (
-                        <Chip 
-                          tag={tag}
-                          href={`/blog/tag/${tag}`}
-                          variant="secondary"
-                        />
-                      ))}
-                    </div>
-                  )}
-                </header>
-                
-                <!-- Description -->
-                <p class="text-slate-300 leading-relaxed mb-4">
-                  {post.data.description}
-                </p>
-                
-                <a 
-                  href={`/blog/${post.slug}`}
-                  class="inline-block text-blue-400 hover:text-blue-300 font-medium transition-colors"
-                >
-                  閱讀更多 →
-                </a>
-              </article>
+                  <a 
+                    href={`/blog/${post.slug}`}
+                    class="inline-block text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                  >
+                    閱讀更多 →
+                  </a>
+                </article>
+              </GlowCard>
             );
           })}
           
@@ -107,7 +135,12 @@ const uniqueTags = Object.keys(tagCounts).sort();
         <div class="lg:col-span-1">
           <div class="sticky top-24">
             <!-- All Tags Section -->
-            <div class="bg-slate-800 rounded-lg p-6 mb-6">
+            <GlowCard 
+              class="mb-6" 
+              glowColor="rgba(168, 85, 247, 0.3)"
+              glowIntensity={400}
+            >
+              <div class="dark:bg-slate-800/90 bg-white/90 backdrop-blur-sm rounded-lg p-6 border dark:border-slate-700/50 border-gray-200/50">
               <h3 class="text-lg font-semibold text-white mb-4">所有標籤</h3>
               
               {uniqueTags.length > 0 ? (

@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import AnimatedBackground from '@/components/ui/AnimatedBackground.astro';
+import { ViewTransitions } from 'astro:transitions';
 import type { SEOProps } from '@/types/global';
 
 interface Props extends SEOProps {
@@ -29,6 +31,9 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
       name='generator'
       content={Astro.generator}
     />
+    
+    <!-- View Transitions -->
+    <ViewTransitions />
 
     <!-- SEO Meta Tags -->
     <title>{title}</title>
@@ -96,6 +101,12 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
     <slot name='head' />
   </head>
   <body class={className}>
-    <slot />
+    <!-- 動畫背景 -->
+    <AnimatedBackground />
+    
+    <!-- 主要內容 -->
+    <div class="relative z-10">
+      <slot />
+    </div>
   </body>
 </html>
