@@ -38,9 +38,8 @@ const uniqueTags = Object.keys(tagCounts).sort();
   <main class="mt-16">
     <div class="max-w-6xl mx-auto px-8 py-8">
       <!-- Page Header -->
-      <div class="mb-12">
-        <h1 class="text-4xl font-bold text-white mb-4">部落格</h1>
-        <p class="text-xl text-slate-300">分享技術學習心得與生活感悟</p>
+      <div class="mb-4">
+        <h1 class="text-4xl font-bold text-[#66F] mb-4">Articles</h1>
       </div>
       
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -135,31 +134,6 @@ const uniqueTags = Object.keys(tagCounts).sort();
               ) : (
                 <p class="text-slate-500">還沒有標籤</p>
               )}
-            </div>
-            
-            <!-- Quick Stats -->
-            <div class="bg-slate-800 rounded-lg p-6">
-              <h3 class="text-lg font-semibold text-white mb-4">統計資訊</h3>
-              <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                  <span class="text-slate-300">總文章數</span>
-                  <span class="text-blue-400 font-semibold">{allPosts.length}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-slate-300">標籤數量</span>
-                  <span class="text-blue-400 font-semibold">{uniqueTags.length}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-slate-300">最新更新</span>
-                  <span class="text-blue-400 font-semibold text-sm">
-                    {sortedPosts.length > 0 ? 
-                      new Intl.DateTimeFormat('zh-TW', { month: 'short', day: 'numeric' })
-                        .format(sortedPosts[0].data.date) 
-                      : '-'
-                    }
-                  </span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
