@@ -1,0 +1,169 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/layout/Header.astro';
+import Chip from '@/components/ui/Chip.astro';
+import { formatDate } from '@/utils/formatDate';
+import { getReadingTime, formatReadingTime } from '@/utils/getReadingTime';
+
+// 獲取所有部落格文章
+const allPosts = await getCollection('blog', ({ data }) => {
+  return data.draft !== true;
+});
+
+// 按日期排序（最新的在前）
+const sortedPosts = allPosts.sort((a, b) => 
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// 獲取所有標籤並統計數量
+const allTags = allPosts.flatMap(post => post.data.tags || []);
+const tagCounts = allTags.reduce((acc, tag) => {
+  acc[tag] = (acc[tag] || 0) + 1;
+  return acc;
+}, {} as Record<string, number>);
+
+const uniqueTags = Object.keys(tagCounts).sort();
+---
+
+<BaseLayout 
+  title="部落格 - Ray's Blog"
+  description="分享技術心得與生活感悟的部落格文章"
+  class="min-h-screen bg-slate-900"
+>
+  <!-- Fixed Header -->
+  <Header />
+  
+  <!-- Main Content Area -->
+  <main class="mt-16">
+    <div class="max-w-6xl mx-auto px-8 py-8">
+      <!-- Page Header -->
+      <div class="mb-12">
+        <h1 class="text-4xl font-bold text-white mb-4">部落格</h1>
+        <p class="text-xl text-slate-300">分享技術學習心得與生活感悟</p>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <!-- Article List -->
+        <div class="lg:col-span-3">
+          {sortedPosts.map((post) => {
+            const readingTime = getReadingTime(post.body);
+            return (
+              <article class="bg-slate-800 rounded-lg p-6 mb-8 hover:bg-slate-700 transition-colors">
+                <header class="mb-4">
+                  <h2 class="text-2xl font-bold text-white mb-3">
+                    <a href={`/blog/${post.slug}`} class="hover:text-blue-400 transition-colors">
+                      {post.data.title}
+                    </a>
+                  </h2>
+                  
+                  <!-- Meta Information -->
+                  <div class="flex items-center text-sm text-slate-400 mb-4 space-x-4">
+                    <span>作者: {post.data.author}</span>
+                    <span>•</span>
+                    <time datetime={post.data.date.toISOString()}>
+                      {formatDate(post.data.date)}
+                    </time>
+                    <span>•</span>
+                    <span>{formatReadingTime(readingTime)}</span>
+                  </div>
+                  
+                  <!-- Tags -->
+                  {post.data.tags && post.data.tags.length > 0 && (
+                    <div class="flex flex-wrap gap-2 mb-4">
+                      {post.data.tags.map((tag) => (
+                        <Chip 
+                          tag={tag}
+                          href={`/blog/tag/${tag}`}
+                          variant="secondary"
+                        />
+                      ))}
+                    </div>
+                  )}
+                </header>
+                
+                <!-- Description -->
+                <p class="text-slate-300 leading-relaxed mb-4">
+                  {post.data.description}
+                </p>
+                
+                <a 
+                  href={`/blog/${post.slug}`}
+                  class="inline-block text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                >
+                  閱讀更多 →
+                </a>
+              </article>
+            );
+          })}
+          
+          {sortedPosts.length === 0 && (
+            <div class="text-center py-12">
+              <p class="text-slate-400 text-lg">目前還沒有文章</p>
+            </div>
+          )}
+        </div>
+        
+        <!-- Tags Sidebar -->
+        <div class="lg:col-span-1">
+          <div class="sticky top-24">
+            <!-- All Tags Section -->
+            <div class="bg-slate-800 rounded-lg p-6 mb-6">
+              <h3 class="text-lg font-semibold text-white mb-4">所有標籤</h3>
+              
+              {uniqueTags.length > 0 ? (
+                <div class="space-y-3">
+                  <div class="p-2 rounded hover:bg-slate-700 transition-colors">
+                    <a href="/blog" class="flex items-center justify-between text-slate-300">
+                      <span>全部文章</span>
+                      <span class="text-sm text-slate-500">({allPosts.length})</span>
+                    </a>
+                  </div>
+                  
+                  <div class="flex flex-wrap gap-2">
+                    {uniqueTags.map((tag) => (
+                      <Chip 
+                        tag={tag}
+                        count={tagCounts[tag]}
+                        href={`/blog/tag/${tag}`}
+                        variant="default"
+                        size="sm"
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p class="text-slate-500">還沒有標籤</p>
+              )}
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="bg-slate-800 rounded-lg p-6">
+              <h3 class="text-lg font-semibold text-white mb-4">統計資訊</h3>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-300">總文章數</span>
+                  <span class="text-blue-400 font-semibold">{allPosts.length}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-300">標籤數量</span>
+                  <span class="text-blue-400 font-semibold">{uniqueTags.length}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-300">最新更新</span>
+                  <span class="text-blue-400 font-semibold text-sm">
+                    {sortedPosts.length > 0 ? 
+                      new Intl.DateTimeFormat('zh-TW', { month: 'short', day: 'numeric' })
+                        .format(sortedPosts[0].data.date) 
+                      : '-'
+                    }
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
