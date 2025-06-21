@@ -2,9 +2,15 @@
 @plugin '@tailwindcss/typography';
 
 /* Global dark theme styles */
-body {
+html, body {
   background-color: #0f172a;
   color: #e2e8f0;
+  overflow-x: hidden; /* 防止水平滾動 */
+  max-width: 100vw; /* 確保不會超過視窗寬度 */
+}
+
+body {
+  position: relative;
 }
 
 /* Responsive utilities */

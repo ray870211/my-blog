@@ -7,11 +7,12 @@
   id='animated-background'
   class='fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden'
   data-astro-transition-persist
+  style='overflow-x: hidden; overflow-y: hidden;'
 >
   <!-- 夜空場景 -->
   <div
     id='night-sky'
-    class='absolute w-[150%] h-[150%] -left-[25%] -top-[25%]'
+    class='absolute w-[200%] h-[200%] -left-[50%] -top-[50%] md:w-[150%] md:h-[150%] md:-left-[25%] md:-top-[25%]'
   >
     <!-- 深度漸層背景 -->
     <div
@@ -30,8 +31,18 @@
     <!-- 銀河效果 -->
     <div
       id='milky-way'
-      class='absolute top-0 left-[20%] w-[60%] h-full opacity-20 transform rotate-12'
-      style='background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);'
+      class='absolute top-[-20%] left-[10%] w-[80%] h-[140%] opacity-20 transform rotate-12'
+      style='background: radial-gradient(ellipse 70% 25% at center, 
+        rgba(59, 130, 246, 0.3) 0%, 
+        rgba(147, 51, 234, 0.25) 20%, 
+        rgba(255, 255, 255, 0.15) 35%, 
+        rgba(239, 68, 68, 0.25) 55%, 
+        rgba(239, 68, 68, 0.15) 70%,
+        rgba(59, 130, 246, 0.08) 85%,
+        transparent 95%); 
+        filter: blur(25px);
+        mask: radial-gradient(ellipse 85% 30% at center, black 0%, black 50%, rgba(0,0,0,0.7) 70%, rgba(0,0,0,0.3) 85%, transparent 100%);
+        -webkit-mask: radial-gradient(ellipse 85% 30% at center, black 0%, black 50%, rgba(0,0,0,0.7) 70%, rgba(0,0,0,0.3) 85%, transparent 100%);'
     >
     </div>
 
@@ -59,6 +70,7 @@
     meteorsContainer;
     moon;
     milkyWay;
+    isMobile;
 
     constructor() {
       this.stars = [];
@@ -79,10 +91,13 @@
       this.meteorsContainer = document.getElementById('meteors-container');
       this.moon = document.getElementById('moon');
       this.milkyWay = document.getElementById('milky-way');
+      this.isMobile = window.innerWidth < 768;
     }
 
     createStars() {
-      const starCount = 1000;
+      const isMobile = window.innerWidth < 768;
+
+      const starCount = isMobile ? 100 : 1000;
 
       for (let i = 0; i < starCount; i++) {
         const star = document.createElement('div');
@@ -90,8 +105,9 @@
 
         // 星星基本屬性
         const size = Math.random() * 3 + 0.5;
-        const x = Math.random() * 150; // 0-150% 覆蓋整個150%的畫布
-        const y = Math.random() * 150;
+        const canvasSize = isMobile ? 200 : 150; // 手機版用200%，桌面版用150%
+        const x = Math.random() * canvasSize;
+        const y = Math.random() * canvasSize;
 
         // 創造深度層次
         const depth = Math.random(); // 0-1，0是最遠，1是最近
@@ -143,39 +159,68 @@
     }
 
     setupEventListeners() {
-      // 優化：限制滑鼠事件觸發頻率
-      let mouseTimeout;
-      document.addEventListener('mousemove', e => {
-        this.mouseX = (e.clientX / window.innerWidth) * 150;
-        this.mouseY = (e.clientY / window.innerHeight) * 150;
+      // 只在桌面版啟用視差效果
+      if (!this.isMobile) {
+        // 優化：限制滑鼠事件觸發頻率
+        let mouseTimeout;
+        document.addEventListener('mousemove', e => {
+          this.mouseX = (e.clientX / window.innerWidth) * 150;
+          this.mouseY = (e.clientY / window.innerHeight) * 150;
 
-        // 使用防抖來減少更新頻率
-        clearTimeout(mouseTimeout);
-        mouseTimeout = setTimeout(() => {
-          this.updateMouseEffects();
-        }, 50); // 50ms 防抖
-      });
+          // 使用防抖來減少更新頻率
+          clearTimeout(mouseTimeout);
+          mouseTimeout = setTimeout(() => {
+            this.updateMouseEffects();
+          }, 50); // 50ms 防抖
+        });
+      }
 
-      // 視窗大小改變時重新初始化
+      // 視窗大小改變時重新初始化（使用防抖避免頻繁觸發）
+      let resizeTimeout;
       window.addEventListener('resize', () => {
-        this.handleResize();
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          this.handleResize();
+        }, 300); // 300ms 防抖，避免滑動時頻繁觸發
       });
     }
 
     handleResize() {
-      // 重新計算星星位置
-      this.stars.forEach(star => {
-        const newX = Math.random() * 150;
-        const newY = Math.random() * 150;
-        star.originalX = newX;
-        star.originalY = newY;
-        star.element.style.left = newX + '%';
-        star.element.style.top = newY + '%';
-      });
+      const isMobile = window.innerWidth < 768;
+
+      // 只在設備類型改變時才重新初始化
+      if (this.isMobile !== isMobile) {
+        this.isMobile = isMobile;
+        const canvasSize = isMobile ? 200 : 150;
+
+        // 重新計算星星位置
+        this.stars.forEach(star => {
+          const newX = Math.random() * canvasSize;
+          const newY = Math.random() * canvasSize;
+          star.originalX = newX;
+          star.originalY = newY;
+          star.element.style.left = newX + '%';
+          star.element.style.top = newY + '%';
+        });
+      }
     }
 
     startAnimations() {
-      // 星星閃爍動畫 - 使用更高效的批次動畫
+      // 手機版使用更輕量的動畫
+      if (this.isMobile) {
+        // 手機版只有銀河旋轉，星星靜態顯示
+        gsap.to(this.milkyWay, {
+          rotation: 360,
+          duration: 480, // 8 分鐘一圈，更慢更省電
+          repeat: -1,
+          ease: 'none',
+        });
+
+        // 手機版星空不旋轉，避免滑動時的衝突
+        return;
+      }
+
+      // 桌面版完整動畫
       const timeline = gsap.timeline({ repeat: -1 });
 
       this.stars.forEach((star, index) => {
@@ -227,6 +272,9 @@
     }
 
     updateMouseEffects() {
+      // 只在桌面版執行視差效果
+      if (this.isMobile) return;
+
       // 視差效果 - 根據滑鼠位置調整星空
       const parallaxX = (this.mouseX - 50) * 0.02;
       const parallaxY = (this.mouseY - 50) * 0.02;

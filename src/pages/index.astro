@@ -60,7 +60,7 @@ const recentPosts = allPosts
         <!-- Social Links -->
         <div class='flex justify-center space-x-6'>
           <Link
-            href='https://github.com/ray0211'
+            href='https://github.com/ray870211'
             class='text-slate-400 hover:text-white transition-colors'
             target='_blank'
             rel='noopener noreferrer'
@@ -114,9 +114,7 @@ const recentPosts = allPosts
       {
         recentPosts.length > 0 && (
           <section>
-            <h2 class='text-3xl font-bold text-white mb-8 text-center'>
-              最新文章
-            </h2>
+            <h2 class='text-3xl font-bold text-white mb-8 text-center'>最新文章</h2>
             <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12'>
               {recentPosts.map(post => (
                 <GlowCard
@@ -133,9 +131,7 @@ const recentPosts = allPosts
                         {post.data.title}
                       </Link>
                     </h3>
-                    <p class='text-slate-300 text-sm mb-4 line-clamp-3'>
-                      {post.data.description}
-                    </p>
+                    <p class='text-slate-300 text-sm mb-4 line-clamp-3'>{post.data.description}</p>
                     <dl class='flex items-center justify-between text-xs text-slate-400 mt-auto'>
                       <div class='flex items-center space-x-1'>
                         <dt class='sr-only'>發布日期</dt>
