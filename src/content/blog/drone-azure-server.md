@@ -10,7 +10,15 @@ draft: false
 
 # 建立 azure 虛擬機器
 
-在 azure 先建立一個資源群組，之後再建立一個虛擬機器，這邊我選擇的是 Standard_D2s_v3 ubuntu
+在 azure 先建立一個資源群組
+
+![azure-group](/images/azure-group.png)
+
+之後再建立一個虛擬機器，選擇 Ubuntu
+
+![azure-ubuntu](/images/azure-ubuntu.png)
+
+這邊我選擇的是 Standard_D2s_v3 ubuntu，網路則選擇 Japan East
 
 建立完成後會下載一個 .pem 檔案，保存到 ~/.ssh
 透過指令
