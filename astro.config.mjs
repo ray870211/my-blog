@@ -1,4 +1,5 @@
 import { defineConfig } from "astro/config";
+import sitemap from "@astrojs/sitemap";
 
 import tailwindcss from "@tailwindcss/vite";
 
@@ -6,6 +7,8 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   site: 'https://ray0211.me',
   base: '/my-blog',
+  
+  integrations: [sitemap()],
   
   vite: {
     plugins: [tailwindcss()],

@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header.astro';
 import Chip from '@/components/ui/Chip.astro';
 import GlowCard from '@/components/ui/GlowCard.astro';
 import Link from '@/components/ui/Link.astro';
+import Footer from '@/components/layout/Footer.astro';
 
 // 獲取最近的幾篇文章
 const allPosts = await getCollection('blog', ({ data }) => {
@@ -29,14 +30,6 @@ const recentPosts = allPosts
     <div class='max-w-4xl mx-auto px-8 py-12'>
       <!-- Hero Section with Introduction -->
       <section class='mb-16'>
-        <div class='mb-8'>
-          <!-- <img
-            src='/images/avatar.svg'
-            alt='Ray Avatar'
-            class='w-32 h-32 rounded-full mx-auto mb-6 border-4 border-blue-500'
-          /> -->
-        </div>
-
         <div class='max-w-2xl mx-auto text-center'>
           <h1 class='text-2xl font-bold text-white mb-6'>Ray</h1>
 
@@ -165,4 +158,5 @@ const recentPosts = allPosts
       }
     </div>
   </main>
+  <Footer />
 </BaseLayout>

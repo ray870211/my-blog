@@ -23,9 +23,7 @@ const currentPath = Astro.url.pathname;
   class='w-64 bg-slate-800 min-h-screen fixed left-0 top-16 overflow-y-auto border-r border-slate-700 lg:translate-x-0 transition-transform duration-300 z-40'
   id='sidebar'
 >
-  <!-- Navigation -->
   <nav class='p-4'>
-    <!-- Recent Posts Section -->
     <div class='sidebar-section'>
       <h3>近期文章</h3>
       <div class='space-y-1'>
@@ -41,7 +39,6 @@ const currentPath = Astro.url.pathname;
       </div>
     </div>
 
-    <!-- Categories Section -->
     <div class='sidebar-section'>
       <button
         class='flex items-center justify-between w-full text-left'
@@ -85,7 +82,6 @@ const currentPath = Astro.url.pathname;
       </div>
     </div>
 
-    <!-- Tags Section -->
     {
       tags.length > 0 && (
         <div class='sidebar-section'>
@@ -103,7 +99,6 @@ const currentPath = Astro.url.pathname;
       )
     }
 
-    <!-- About Section -->
     <div class='sidebar-section'>
       <h3>關於</h3>
       <div class='space-y-1'>
@@ -126,7 +121,6 @@ const currentPath = Astro.url.pathname;
 </aside>
 
 <script>
-  // Categories toggle functionality
   const toggle = document.getElementById('categories-toggle');
   const content = document.getElementById('categories-content');
   const icon = document.getElementById('categories-icon');
