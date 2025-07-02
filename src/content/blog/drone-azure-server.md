@@ -55,6 +55,14 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 
 # 建立 drone server
 
+為了讓其他人的帳號也能夠使用 Drone，要建立一個 openssl 密鑰，這個密鑰會用來加密 Drone 的 RPC 通訊。可以透過以下指令建立：
+
+```bash
+# 填入到env的 DRONE_RPC_SECRET
+# 這個密鑰可以隨便生成，建議使用 openssl
+openssl rand -hex 16
+```
+
 接著我們在我們的 server 上先創建一個.env 檔案，並填入以下內容：
 
 ```env
@@ -74,12 +82,6 @@ DRONE_USER_CREATE=username:your_gitlab_username,admin:true
 # 除錯模式
 DRONE_LOGS_TRACE=true
 DRONE_LOGS_DEBUG=true
-```
-
-為了讓其他人的帳號也能夠使用 Drone，要建立一個 openssl 密鑰，這個密鑰會用來加密 Drone 的 RPC 通訊。可以透過以下指令建立：
-
-```bash
-openssl rand -hex 16
 ```
 
 接著我們下指令來下載 drone 鏡像
@@ -152,7 +154,7 @@ sudo ufw allow ssh
 
 ## 在 gitlab 設定 webhook
 
-到專案底下 Settings -> webhook 填入剛剛生成過的密鑰（DRONE_RPC_SECRET），並且填入 Drone Server 的 URL
+到專案底下 Settings -> webhook 填入剛剛用 openssl 生成過的密鑰（DRONE_RPC_SECRET），並且填入 Drone Server 的 URL
 
 ![webhook](/images/webhook.png)
 
@@ -214,18 +216,18 @@ volumes:
 ```env
 # GitLab OAuth 設定
 DRONE_GITLAB_SERVER=https://gitlab.com
-DRONE_GITLAB_CLIENT_ID= aaaaaaaaaaaa
-DRONE_GITLAB_CLIENT_SECRET= bbbbbbbbbbbb
+DRONE_GITLAB_CLIENT_ID=在 GitLab 上建立的應用程式 ID
+DRONE_GITLAB_CLIENT_SECRET=在 GitLab 上建立的應用程式密鑰
 
 # Drone Server 設定
-DRONE_RPC_SECRET=ccccccccccccc
+DRONE_RPC_SECRET=my-super-secret-key
 DRONE_SERVER_HOST=20.243.0.245:8080
 DRONE_SERVER_PROTO=http
 
-# 管理員設定
-DRONE_USER_CREATE=username:ray870211,admin:true
+# 管理員設定（記得改成你的 GitLab 使用者名稱）
+DRONE_USER_CREATE=username:your_gitlab_username,admin:true
 
-# 除錯日誌
+# 除錯模式
 DRONE_LOGS_TRACE=true
 DRONE_LOGS_DEBUG=true
 
