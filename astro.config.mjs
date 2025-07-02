@@ -6,7 +6,6 @@ import tailwindcss from "@tailwindcss/vite";
 // https://astro.build/config
 export default defineConfig({
   site: 'https://ray0211.me',
-  base: '/my-blog',
   
   integrations: [sitemap()],
   

@@ -4,7 +4,7 @@ description: '詳細教學如何在 Azure 虛擬機器上安裝 Docker、建立 
 date: 2024-07-02
 tags: ['azure', 'drone', 'cicd', 'docker', 'gitlab', 'devops', 'automation']
 author: 'ray'
-coverImage: '/my-blog/images/drone-server.png'
+coverImage: '/images/drone-server.png'
 draft: false
 ---
 
@@ -148,17 +148,17 @@ sudo ufw allow ssh
 ```
 
 然後 Azure 的網路安全組也要開放 8080 端口，這樣才能從外部連線到 Drone Server。
-![azure-net-work-config](/my-blog/images/azure-net-work-config.png)
+![azure-net-work-config](/images/azure-net-work-config.png)
 
 ## 在 gitlab 設定 webhook
 
 到專案底下 Settings -> webhook 填入剛剛生成過的密鑰（DRONE_RPC_SECRET），並且填入 Drone Server 的 URL
 
-![webhook](/my-blog/images/webhook.png)
+![webhook](/images/webhook.png)
 
 接著就可以按下旁邊的測試
 
-![webhook-test](/my-blog/images/webhook-test.png)
+![webhook-test](/images/webhook-test.png)
 
 # Drone Runner
 
@@ -264,7 +264,7 @@ steps:
 
 接著我們到剛剛的 Drone Server 網頁，登入後就可以看到剛剛建立的專案了。
 
-![drone-server](/my-blog/images/drone-server.png)
+![drone-server](/images/drone-server.png)
 
 可以先按下 Sync 來同步專案，然後就可以看到剛剛建立的 pipeline。
 
