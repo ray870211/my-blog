@@ -1,6 +1,6 @@
 ---
 title: 'Linear + MCP：讓 AI 協助專案管理的完美組合'
-description: '探討為什麼選擇 Linear 作為專案管理工具，以及如何透過 MCP 整合 AI 來提升團隊協作效率。從基本的 Issue 管理到智能任務查詢，全面解析 Linear 的使用優勢。'
+description: '探討為什麼選擇 Linear 作為專案管理工具，以及如何透過 MCP 整合 AI 來提升團隊協作效率。從基本的 Issue 管理到智能任務查詢，認識 Linear 的使用優勢。'
 date: 2025-07-03
 tags: ['專案管理', 'Linear', 'MCP', 'AI', '團隊協作', '工作流程']
 author: 'Ray'
