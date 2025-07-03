@@ -1,14 +1,14 @@
 ---
 title: '在 Azure 虛擬機器上建立 Drone CI/CD 服務器'
 description: '詳細教學如何在 Azure 虛擬機器上安裝 Docker、建立 Drone Server 和 Drone Runner，整合 GitLab 實現自動化 CI/CD 流程'
-date: 2024-07-02
+date: 2024-06-29
 tags: ['azure', 'drone', 'cicd', 'docker', 'gitlab', 'devops', 'automation']
 author: 'ray'
 coverImage: '/images/drone-server.png'
 draft: false
 ---
 
-# 建立 azure 虛擬機器
+## 建立 azure 虛擬機器
 
 在 azure 先建立一個資源群組
 
@@ -61,7 +61,7 @@ sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 
-# 建立 drone server
+## 建立 drone server
 
 為了讓其他人的帳號也能夠使用 Drone，要建立一個 openssl 密鑰，這個密鑰會用來加密 Drone 的 RPC 通訊。可以透過以下指令建立：
 
@@ -160,7 +160,7 @@ sudo ufw allow ssh
 然後 Azure 的網路安全組也要開放 8080 端口，這樣才能從外部連線到 Drone Server。
 ![azure-net-work-config](/images/azure-net-work-config.png)
 
-## 在 gitlab 設定 webhook
+### 在 gitlab 設定 webhook
 
 到專案底下 Settings -> webhook 填入剛剛用 openssl 生成過的密鑰（DRONE_RPC_SECRET），並且填入 Drone Server 的 URL
 
@@ -170,7 +170,7 @@ sudo ufw allow ssh
 
 ![webhook-test](/images/webhook-test.png)
 
-# Drone Runner
+## Drone Runner
 
 這裡我們用 Docker Compose 來部署 Drone Runner，也把剛剛的 Drone Server 設定放進來
 
@@ -256,7 +256,7 @@ DRONE_RUNNER_NAME=main-runner
 docker compose up -d
 ```
 
-# 如何使用
+## 如何使用
 
 做完以上步驟後，你就可以在 GitLab 上建立一個專案，然後在專案根目錄下建立 `.drone.yml` 檔案，內容如下：
 
