@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
 import Chip from '@/components/ui/Chip.astro';
 import { formatDate } from '@/utils/formatDate';
 import { getReadingTime, formatReadingTime } from '@/utils/getReadingTime';
@@ -84,14 +85,14 @@ const readingTime = getReadingTime(content);
         }
 
         <!-- Description -->
-        <p class='text-lg text-slate-300 leading-relaxed border-l-4 border-blue-500 pl-6 mb-8'>
+        <p class='text-lg text-slate-300 leading-relaxed border-l-4 border-slate-500 pl-6 mb-8 bg-gradient-to-r from-transparent to-slate-500/10 py-2'>
           {description}
         </p>
 
         <!-- Back to blog link -->
         <Link
           href='/blog'
-          class='inline-block text-blue-400 hover:text-blue-300 transition-colors mb-8'
+          class='inline-block text-slate-400 hover:text-white transition-all duration-300 mb-8 hover:translate-x-1'
         >
           ← 返回所有文章
         </Link>
@@ -99,10 +100,11 @@ const readingTime = getReadingTime(content);
 
       <!-- Article Content -->
       <article
-        class='prose prose-lg prose-invert prose-slate max-w-none prose-headings:text-white prose-a:text-blue-400 prose-code:text-amber-400'
+        class='prose prose-lg prose-invert prose-slate max-w-none prose-headings:text-white prose-a:text-slate-300 prose-a:hover:text-white prose-code:text-slate-300 prose-code:bg-slate-800/50 prose-blockquote:border-slate-500 prose-blockquote:text-slate-300'
       >
         <slot />
       </article>
     </div>
   </main>
+  <Footer />
 </BaseLayout>

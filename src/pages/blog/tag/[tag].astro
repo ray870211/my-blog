@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
 import Chip from '@/components/ui/Chip.astro';
 import { formatDate } from '@/utils/formatDate';
 import { getReadingTime, formatReadingTime } from '@/utils/getReadingTime';
@@ -182,4 +183,5 @@ const uniqueTags = Object.keys(tagCounts).sort();
       </div>
     </div>
   </main>
+  <Footer />
 </BaseLayout>

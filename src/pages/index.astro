@@ -31,7 +31,7 @@ const recentPosts = allPosts
       <!-- Hero Section with Introduction -->
       <section class='mb-16'>
         <div class='max-w-2xl mx-auto text-center'>
-          <h1 class='text-2xl font-bold text-white mb-6'>Ray</h1>
+          <h1 class='text-3xl font-bold text-white mb-6'>Ray</h1>
 
           <p class='text-md text-slate-300 mb-8 leading-relaxed'>
             喜歡前端的工程師。 在這裡分享我的技術學習心得、AI 探索過程，以及一些些生活感悟。
@@ -44,7 +44,7 @@ const recentPosts = allPosts
         <div class='flex justify-center space-x-4 mb-8'>
           <Link
             href='/blog'
-            class='bg-black opacity-70 text-white px-8 py-3 rounded-lg font-semibold hover:bg-sky-800 transition-colors'
+            class='bg-slate-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-slate-600 transition-all duration-300'
           >
             瀏覽文章
           </Link>
@@ -120,7 +120,7 @@ const recentPosts = allPosts
                       style={`view-transition-name: post-title-${post.slug}`}>
                       <Link
                         href={`/blog/${post.slug}`}
-                        class='hover:text-blue-400 transition-colors'>
+                        class='hover:text-slate-300 transition-colors'>
                         {post.data.title}
                       </Link>
                     </h3>

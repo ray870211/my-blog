@@ -10,11 +10,11 @@ interface Props {
 
 const { tag, count, href, variant = 'default', size = 'md' } = Astro.props;
 
-// 顏色變體樣式
+// 統一簡約配色系統
 const variantClasses = {
-  default: 'bg-slate-700 text-slate-300 hover:bg-slate-600',
-  active: 'bg-blue-600 text-white',
-  secondary: 'bg-blue-900 text-blue-200 hover:bg-blue-800',
+  default: 'bg-slate-700 text-slate-200 hover:bg-slate-600',
+  active: 'bg-slate-600 text-white',
+  secondary: 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-600',
 };
 
 // 尺寸樣式
@@ -36,7 +36,7 @@ const classes = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]}`
       class={classes}>
       <span>#{tag}</span>
       {count && (
-        <span class={`ml-1 text-xs ${variant === 'active' ? 'text-blue-200' : 'text-slate-500'}`}>
+        <span class={`ml-1 text-xs ${variant === 'active' ? 'text-slate-200' : 'opacity-70'}`}>
           {count}
         </span>
       )}
@@ -45,7 +45,7 @@ const classes = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]}`
     <span class={classes}>
       <span>#{tag}</span>
       {count && (
-        <span class={`ml-1 text-xs ${variant === 'active' ? 'text-blue-200' : 'text-slate-500'}`}>
+        <span class={`ml-1 text-xs ${variant === 'active' ? 'text-slate-200' : 'opacity-70'}`}>
           {count}
         </span>
       )}
