@@ -2,7 +2,7 @@
 title: '後見之明偏差：我們真的早就知道嗎？'
 description: '《清醒思考的藝術》中提到的『後見之明偏差』。我們真的有預測未來的能力嗎？'
 date: 2025-07-24
-tags: ['']
+tags: ['讀書心得']
 author: 'ray'
 coverImage: ''
 draft: false
