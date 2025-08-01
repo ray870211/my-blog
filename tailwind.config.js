@@ -6,6 +6,10 @@ export default {
   darkMode: 'class', // 使用 class 策略
   theme: {
     extend: {
+      fontFamily: {
+        'mono': ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', 'monospace'],
+        'jetbrains': ['JetBrains Mono', 'monospace'],
+      },
       colors: {
         // 自定義暗色模式顏色
         dark: {
