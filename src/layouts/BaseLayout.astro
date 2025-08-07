@@ -32,7 +32,7 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
       name='generator'
       content={Astro.generator}
     />
-    
+
     <!-- View Transitions -->
     <ClientRouter />
 
@@ -164,11 +164,8 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
     <slot name='head' />
   </head>
   <body class={className}>
-    <!-- 動畫背景 -->
-    <AnimatedBackground />
-    
     <!-- 主要內容 -->
-    <div class="relative z-10">
+    <div class='relative z-10'>
       <slot />
     </div>
   </body>
