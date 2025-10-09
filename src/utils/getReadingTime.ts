@@ -9,7 +9,7 @@ export function getReadingTime(content: string): number {
   
   const readingTimeMinutes = (chineseCharCount / chineseReadingSpeed) + (englishWordCount / englishReadingSpeed);
   
-  return Math.max(1, Math.round(readingTimeMinutes));
+  return Math.max(1, Math.ceil(readingTimeMinutes));
 }
 
 export function formatReadingTime(minutes: number): string {
