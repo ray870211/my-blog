@@ -1,27 +1,20 @@
 ---
-import { getCollection } from 'astro:content';
 import Link from '@/components/ui/Link.astro';
-// 獲取最近文章
-const recentPosts = await getCollection('blog', ({ data }) => {
-  return data.draft !== true;
-}).then(posts =>
-  posts
-    .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
-    .slice(0, 5)
-);
+import Icon from '@/components/ui/Icon.astro';
+import { getPublishedPosts, getUniqueTags } from '@/utils/posts';
+import { SIDEBAR_NAV } from '@/config/site';
 
-// 獲取所有標籤
-const allPosts = await getCollection('blog', ({ data }) => {
-  return data.draft !== true;
-});
-const tags = [...new Set(allPosts.flatMap(post => post.data.tags || []))];
+const allPosts = await getPublishedPosts();
+const recentPosts = allPosts.slice(0, 5);
+const tags = getUniqueTags(allPosts);
 
 const currentPath = Astro.url.pathname;
 ---
 
 <aside
-  class='w-64 bg-slate-800 min-h-screen fixed left-0 top-16 overflow-y-auto border-r border-slate-700 lg:translate-x-0 transition-transform duration-300 z-40'
   id='sidebar'
+  class='w-64 bg-slate-800 min-h-screen fixed left-0 top-16 overflow-y-auto border-r border-slate-700 lg:translate-x-0 transition-transform duration-300 z-40'
+  aria-label='側邊欄'
 >
   <nav class='p-4'>
     <div class='sidebar-section'>
@@ -41,28 +34,22 @@ const currentPath = Astro.url.pathname;
 
     <div class='sidebar-section'>
       <button
-        class='flex items-center justify-between w-full text-left'
         id='categories-toggle'
+        type='button'
+        class='flex items-center justify-between w-full text-left'
+        aria-controls='categories-content'
+        aria-expanded='true'
+        aria-label='切換 Code 分類'
       >
         <h3>Code</h3>
-        <svg
+        <Icon
+          name='chevron-down'
           class='w-4 h-4 text-slate-400 transform transition-transform'
-          id='categories-icon'
-          viewBox='0 0 24 24'
-          fill='none'
-        >
-          <path
-            stroke='currentColor'
-            stroke-linecap='round'
-            stroke-linejoin='round'
-            stroke-width='2'
-            d='m19 9-7 7-7-7'
-          ></path>
-        </svg>
+        />
       </button>
       <div
-        class='space-y-1 mt-2'
         id='categories-content'
+        class='space-y-1 mt-2'
       >
         <Link
           href='/blog'
@@ -102,33 +89,36 @@ const currentPath = Astro.url.pathname;
     <div class='sidebar-section'>
       <h3>關於</h3>
       <div class='space-y-1'>
-        <Link
-          href='/about'
-          class={`nav-item text-sm ${currentPath === '/about' ? 'active' : ''}`}
-        >
-          關於我
-        </Link>
-        <Link
-          href='/rss.xml'
-          class='nav-item text-sm'
-          target='_blank'
-        >
-          RSS 訂閱
-        </Link>
+        {
+          SIDEBAR_NAV.map(item => (
+            <Link
+              href={item.href}
+              class={`nav-item text-sm ${currentPath === item.href ? 'active' : ''}`}
+              target={item.external ? '_blank' : undefined}>
+              {item.name}
+            </Link>
+          ))
+        }
       </div>
     </div>
   </nav>
 </aside>
 
 <script>
-  const toggle = document.getElementById('categories-toggle');
-  const content = document.getElementById('categories-content');
-  const icon = document.getElementById('categories-icon');
+  function initCategoryToggle() {
+    const toggle = document.getElementById('categories-toggle');
+    const content = document.getElementById('categories-content');
+    if (!toggle || !content) return;
+    const icon = toggle.querySelector('svg');
 
-  if (toggle && content && icon) {
     toggle.addEventListener('click', () => {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!expanded));
       content.classList.toggle('hidden');
-      icon.classList.toggle('rotate-180');
+      icon?.classList.toggle('rotate-180');
     });
   }
+
+  document.addEventListener('DOMContentLoaded', initCategoryToggle);
+  document.addEventListener('astro:page-load', initCategoryToggle);
 </script>

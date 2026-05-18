@@ -1,0 +1,31 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import type { SEOProps } from '@/types/global';
+
+interface Props extends SEOProps {
+  class?: string;
+  mainClass?: string;
+}
+
+const {
+  class: bodyClass = 'min-h-screen',
+  mainClass = 'mt-16',
+  ...seo
+} = Astro.props;
+---
+
+<BaseLayout
+  {...seo}
+  class={bodyClass}
+>
+  <Header />
+  <main
+    id='main-content'
+    class={mainClass}
+  >
+    <slot />
+  </main>
+  <Footer />
+</BaseLayout>

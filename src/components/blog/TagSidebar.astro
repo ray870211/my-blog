@@ -1,0 +1,49 @@
+---
+import Chip from '@/components/ui/Chip.astro';
+import Link from '@/components/ui/Link.astro';
+import { getTagCounts, getUniqueTags, type BlogPost } from '@/utils/posts';
+
+interface Props {
+  posts: BlogPost[];
+  activeTag?: string;
+}
+
+const { posts, activeTag } = Astro.props;
+const tagCounts = getTagCounts(posts);
+const uniqueTags = getUniqueTags(posts);
+---
+
+<aside class='lg:col-span-1'>
+  <div class='sticky top-24'>
+    <h3 class='text-lg font-semibold text-white mb-6'>所有標籤</h3>
+
+    {
+      uniqueTags.length > 0 ? (
+        <div class='space-y-4'>
+          <div class='pb-3 border-b border-slate-700/30'>
+            <Link
+              href='/blog'
+              class='flex items-center justify-between text-slate-300 hover:text-white transition-colors'>
+              <span>全部文章</span>
+              <span class='text-sm text-slate-500'>({posts.length})</span>
+            </Link>
+          </div>
+
+          <div class='flex flex-wrap gap-2'>
+            {uniqueTags.map(tag => (
+              <Chip
+                tag={tag}
+                count={tagCounts[tag]}
+                href={`/blog/tag/${tag}`}
+                variant={tag === activeTag ? 'active' : 'default'}
+                size='sm'
+              />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p class='text-slate-500'>還沒有標籤</p>
+      )
+    }
+  </div>
+</aside>
