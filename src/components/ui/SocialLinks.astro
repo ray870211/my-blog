@@ -1,0 +1,33 @@
+---
+import Link from '@/components/ui/Link.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { SOCIAL } from '@/config/site';
+
+interface Props {
+  class?: string;
+  iconClass?: string;
+}
+
+const {
+  class: className = 'flex items-center space-x-4',
+  iconClass = 'w-5 h-5',
+} = Astro.props;
+---
+
+<div class={className}>
+  {
+    SOCIAL.map(({ name, href, icon }) => (
+      <Link
+        href={href}
+        class='text-slate-400 hover:text-white transition-colors'
+        target='_blank'
+        rel='noopener noreferrer'
+        aria-label={name}>
+        <Icon
+          name={icon}
+          class={iconClass}
+        />
+      </Link>
+    ))
+  }
+</div>

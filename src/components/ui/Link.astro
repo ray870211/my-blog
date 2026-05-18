@@ -1,12 +1,9 @@
 ---
+import type { HTMLAttributes } from 'astro/types';
 import { withBase, isExternalLink } from '@/utils/link';
 
-interface Props {
+interface Props extends Omit<HTMLAttributes<'a'>, 'href'> {
   href: string;
-  class?: string;
-  target?: string;
-  rel?: string;
-  'data-astro-prefetch'?: boolean;
 }
 
 const { href, class: className = '', target, rel, ...rest } = Astro.props;

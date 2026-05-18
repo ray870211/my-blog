@@ -1,171 +1,43 @@
 ---
-import { getCollection } from 'astro:content';
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import Header from '@/components/layout/Header.astro';
-import Footer from '@/components/layout/Footer.astro';
-import Chip from '@/components/ui/Chip.astro';
-import Link from '@/components/ui/Link.astro';
-import { formatDate } from '@/utils/formatDate';
-import { getReadingTime, formatReadingTime } from '@/utils/getReadingTime';
+import MainLayout from '@/layouts/MainLayout.astro';
+import PostListItem from '@/components/blog/PostListItem.astro';
+import TagSidebar from '@/components/blog/TagSidebar.astro';
+import { getPublishedPosts } from '@/utils/posts';
+import { SITE } from '@/config/site';
 
-// 獲取所有部落格文章
-const allPosts = await getCollection('blog', ({ data }) => {
-  return data.draft !== true;
-});
-
-// 按日期排序（最新的在前）
-const sortedPosts = allPosts.sort((a, b) => 
-  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
-);
-
-// 獲取所有標籤並統計數量
-const allTags = allPosts.flatMap(post => post.data.tags || []);
-const tagCounts = allTags.reduce((acc, tag) => {
-  acc[tag] = (acc[tag] || 0) + 1;
-  return acc;
-}, {} as Record<string, number>);
-
-const uniqueTags = Object.keys(tagCounts).sort();
+const sortedPosts = await getPublishedPosts();
 ---
 
-<BaseLayout 
-  title="部落格 - Ray's Blog"
-  description="分享技術心得與生活感悟的部落格文章"
-  class="min-h-screen"
+<MainLayout
+  title={`部落格 - ${SITE.name}`}
+  description='分享技術心得與生活感悟的部落格文章'
 >
-  <!-- Fixed Header -->
-  <Header />
-  
-  <!-- Main Content Area -->
-  <main class="mt-16">
-    <div class="max-w-6xl mx-auto px-8 py-8">
-      <!-- Page Header -->
-      <div class="mb-4">
-        <h1 class="text-4xl font-bold text-white mb-4">Articles</h1>
-      </div>
-      
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <!-- Article List -->
-        <div class="lg:col-span-3">
-          {sortedPosts.map((post, index) => {
-            const readingTime = getReadingTime(post.body);
-            return (
-              <article class={`py-6 md:py-8 ${index !== sortedPosts.length - 1 ? 'border-b border-slate-700/30' : ''} transition-all duration-300 hover:bg-slate-900/20 md:hover:px-4 md:hover:mx-[-1rem] md:hover:rounded-lg`}>
-                <header class="mb-4">
-                  <h2 
-                    class="text-2xl font-bold text-white mb-3 leading-tight"
-                    style={`view-transition-name: post-title-${post.slug}`}
-                  >
-                    <Link href={`/blog/${post.slug}`} class="hover:text-slate-300 transition-colors">
-                      {post.data.title}
-                    </Link>
-                  </h2>
-                  
-                  <!-- Meta Information -->
-                  <dl class="flex flex-wrap items-center text-sm text-slate-400 mb-3 gap-x-4 gap-y-1">
-                    <div class="flex items-center space-x-1">
-                      <dt class="sr-only">發布日期</dt>
-                      <dd>
-                        <time 
-                          datetime={post.data.date.toISOString()}
-                          style={`view-transition-name: post-date-${post.slug}`}
-                        >
-                          {formatDate(post.data.date)}
-                        </time>
-                      </dd>
-                    </div>
-                    <span>•</span>
-                    <div class="flex items-center space-x-1">
-                      <dt class="sr-only">閱讀時間</dt>
-                      <dd style={`view-transition-name: post-reading-time-${post.slug}`}>
-                        {formatReadingTime(readingTime)}
-                      </dd>
-                    </div>
-                    <span>•</span>
-                    <div class="flex items-center space-x-1">
-                      <dt class="sr-only">作者</dt>
-                      <dd style={`view-transition-name: post-author-${post.slug}`}>
-                        {post.data.author}
-                      </dd>
-                    </div>
-                  </dl>
-                </header>
-                
-                <!-- Description -->
-                <p class="text-slate-300 leading-relaxed mb-4 text-base">
-                  {post.data.description}
-                </p>
-                
-                <!-- Tags -->
-                {post.data.tags && post.data.tags.length > 0 && (
-                  <div class="flex flex-wrap gap-2 mb-4">
-                    {post.data.tags.map((tag) => (
-                      <Chip 
-                        tag={tag}
-                        href={`/blog/tag/${tag}`}
-                        variant="secondary"
-                        size="sm"
-                      />
-                    ))}
-                  </div>
-                )}
-                
-                <Link 
-                  href={`/blog/${post.slug}`}
-                  class="inline-flex items-center text-slate-400 hover:text-white font-medium transition-all duration-300 group"
-                >
-                  閱讀更多 
-                  <svg class="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                  </svg>
-                </Link>
-              </article>
-            );
-          })}
-          
-          {sortedPosts.length === 0 && (
-            <div class="text-center py-12">
-              <p class="text-slate-400 text-lg">目前還沒有文章</p>
-            </div>
-          )}
-        </div>
-        
-        <!-- Tags Sidebar -->
-        <div class="lg:col-span-1">
-          <div class="sticky top-24">
-            <!-- All Tags Section -->
-            <div class="mb-6">
-              <h3 class="text-lg font-semibold text-white mb-6">所有標籤</h3>
-              
-              {uniqueTags.length > 0 ? (
-                <div class="space-y-4">
-                  <div class="pb-3 border-b border-slate-700/30">
-                    <Link href="/blog" class="flex items-center justify-between text-slate-300 hover:text-white transition-colors">
-                      <span>全部文章</span>
-                      <span class="text-sm text-slate-500">({allPosts.length})</span>
-                    </Link>
-                  </div>
-                  
-                  <div class="flex flex-wrap gap-2">
-                    {uniqueTags.map((tag) => (
-                      <Chip 
-                        tag={tag}
-                        count={tagCounts[tag]}
-                        href={`/blog/tag/${tag}`}
-                        variant="default"
-                        size="sm"
-                      />
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <p class="text-slate-500">還沒有標籤</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+  <div class='max-w-6xl mx-auto px-8 py-8'>
+    <div class='mb-4'>
+      <h1 class='text-4xl font-bold text-white mb-4'>Articles</h1>
     </div>
-  </main>
-  <Footer />
-</BaseLayout>
+
+    <div class='grid grid-cols-1 lg:grid-cols-4 gap-8'>
+      <div class='lg:col-span-3'>
+        {
+          sortedPosts.map((post, index) => (
+            <PostListItem
+              post={post}
+              isLast={index === sortedPosts.length - 1}
+            />
+          ))
+        }
+
+        {
+          sortedPosts.length === 0 && (
+            <div class='text-center py-12'>
+              <p class='text-slate-400 text-lg'>目前還沒有文章</p>
+            </div>
+          )
+        }
+      </div>
+
+      <TagSidebar posts={sortedPosts} />
+    </div>
+  </div>
+</MainLayout>

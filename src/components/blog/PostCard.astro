@@ -1,0 +1,64 @@
+---
+import Chip from '@/components/ui/Chip.astro';
+import GlowCard from '@/components/ui/GlowCard.astro';
+import Link from '@/components/ui/Link.astro';
+import type { BlogPost } from '@/utils/posts';
+
+interface Props {
+  post: BlogPost;
+}
+
+const { post } = Astro.props;
+const firstTag = post.data.tags?.[0];
+const compactDate = new Intl.DateTimeFormat('zh-TW', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+}).format(post.data.date);
+---
+
+<GlowCard
+  class='min-h-[200px]'
+  glowColor='rgba(221, 130, 246, 1)'
+  glowIntensity={600}
+>
+  <article class='bg-slate-800/90 backdrop-blur-sm rounded-lg p-6 h-full border border-slate-700/50 transition-all duration-300'>
+    <h3
+      class='text-xl font-semibold text-white mb-3'
+      style={`view-transition-name: post-title-${post.slug}`}
+    >
+      <Link
+        href={`/blog/${post.slug}`}
+        class='hover:text-slate-300 transition-colors'
+      >
+        {post.data.title}
+      </Link>
+    </h3>
+    <p class='text-slate-300 text-sm mb-4 line-clamp-3'>
+      {post.data.description}
+    </p>
+    <dl class='flex items-center justify-between text-xs text-slate-400 mt-auto'>
+      <div class='flex items-center space-x-1'>
+        <dt class='sr-only'>發布日期</dt>
+        <dd>
+          <time
+            datetime={post.data.date.toISOString()}
+            style={`view-transition-name: post-date-${post.slug}`}
+          >
+            {compactDate}
+          </time>
+        </dd>
+      </div>
+      {
+        firstTag && (
+          <Chip
+            tag={firstTag}
+            href={`/blog/tag/${firstTag}`}
+            variant='secondary'
+            size='sm'
+          />
+        )
+      }
+    </dl>
+  </article>
+</GlowCard>

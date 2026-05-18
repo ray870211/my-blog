@@ -1,110 +1,70 @@
 ---
-import BaseLayout from './BaseLayout.astro';
-import Header from '@/components/layout/Header.astro';
-import Footer from '@/components/layout/Footer.astro';
+import MainLayout from './MainLayout.astro';
 import Chip from '@/components/ui/Chip.astro';
-import { formatDate } from '@/utils/formatDate';
-import { getReadingTime, formatReadingTime } from '@/utils/getReadingTime';
-import type { CollectionEntry } from 'astro:content';
 import Link from '@/components/ui/Link.astro';
+import PostMeta from '@/components/ui/PostMeta.astro';
+import type { BlogPost } from '@/utils/posts';
 
 interface Props {
-  post: CollectionEntry<'blog'>;
+  post: BlogPost;
   content?: string;
 }
 
 const { post, content = '' } = Astro.props;
-const { title, description, date, tags, author } = post.data;
-const readingTime = getReadingTime(content);
+const { title, description, tags } = post.data;
 ---
 
-<BaseLayout
+<MainLayout
   title={title}
   description={description}
   type='article'
   class='min-h-screen bg-slate-900'
 >
-  <!-- Fixed Header -->
-  <Header />
-
-  <!-- Main Content Area -->
-  <main class='mt-16'>
-    <div class='max-w-4xl mx-auto px-8 py-8'>
-      <!-- Article Header with Meta Info -->
-      <header class='mb-12'>
-        <!-- Title -->
-        <h1
-          class='text-4xl font-bold text-white mb-6'
-          style={`view-transition-name: post-title-${post.slug}`}
-        >
-          {title}
-        </h1>
-
-        <!-- Meta Information -->
-        <dl class='flex items-center text-sm text-slate-400 mb-6 space-x-4'>
-          <div class='flex items-center space-x-1'>
-            <dt class='sr-only'>作者</dt>
-            <dd style={`view-transition-name: post-author-${post.slug}`}>
-              作者: {author}
-            </dd>
-          </div>
-          <span>•</span>
-          <div class='flex items-center space-x-1'>
-            <dt class='sr-only'>發布日期</dt>
-            <dd>
-              <time
-                datetime={date.toISOString()}
-                style={`view-transition-name: post-date-${post.slug}`}
-              >
-                {formatDate(date)}
-              </time>
-            </dd>
-          </div>
-          <span>•</span>
-          <div class='flex items-center space-x-1'>
-            <dt class='sr-only'>閱讀時間</dt>
-            <dd style={`view-transition-name: post-reading-time-${post.slug}`}>
-              {formatReadingTime(readingTime)}
-            </dd>
-          </div>
-        </dl>
-
-        <!-- Tags -->
-        {
-          tags && tags.length > 0 && (
-            <div class='flex flex-wrap gap-2 mb-6'>
-              {tags.map(tag => (
-                <Chip
-                  tag={tag}
-                  href={`/blog/tag/${tag}`}
-                  variant='secondary'
-                />
-              ))}
-            </div>
-          )
-        }
-
-        <!-- Description -->
-        <p class='text-lg text-slate-300 leading-relaxed border-l-4 border-slate-500 pl-6 mb-8 bg-gradient-to-r from-transparent to-slate-500/10 py-2'>
-          {description}
-        </p>
-
-        <!-- Back to blog link -->
-        <Link
-          href='/blog'
-          class='inline-block text-slate-400 hover:text-white transition-all duration-300 mb-8 hover:translate-x-1'
-        >
-          ← 返回所有文章
-        </Link>
-      </header>
-
-      <!-- Article Content -->
-      <article
-        class='prose prose-lg prose-invert prose-slate max-w-none prose-headings:text-white prose-a:text-slate-300 prose-a:hover:text-white prose-code:text-slate-300 prose-code:bg-slate-800/50 prose-blockquote:border-slate-500 prose-blockquote:text-slate-300'
+  <div class='max-w-4xl mx-auto px-8 py-8'>
+    <header class='mb-12'>
+      <h1
+        class='text-4xl font-bold text-white mb-6'
+        style={`view-transition-name: post-title-${post.slug}`}
       >
-        <slot />
-      </article>
-    </div>
-  </main>
-  <Footer />
-</BaseLayout>
+        {title}
+      </h1>
+
+      <PostMeta
+        post={post}
+        content={content}
+        class='mb-6 space-x-4'
+      />
+
+      {
+        tags && tags.length > 0 && (
+          <div class='flex flex-wrap gap-2 mb-6'>
+            {tags.map(tag => (
+              <Chip
+                tag={tag}
+                href={`/blog/tag/${tag}`}
+                variant='secondary'
+              />
+            ))}
+          </div>
+        )
+      }
+
+      <p class='text-lg text-slate-300 leading-relaxed border-l-4 border-slate-500 pl-6 mb-8 bg-gradient-to-r from-transparent to-slate-500/10 py-2'>
+        {description}
+      </p>
+
+      <Link
+        href='/blog'
+        class='inline-block text-slate-400 hover:text-white transition-all duration-300 mb-8 hover:translate-x-1'
+      >
+        ← 返回所有文章
+      </Link>
+    </header>
+
+    <article
+      class='prose prose-lg prose-invert prose-slate max-w-none prose-headings:text-white prose-a:text-slate-300 prose-a:hover:text-white prose-code:text-slate-300 prose-code:bg-slate-800/50 prose-blockquote:border-slate-500 prose-blockquote:text-slate-300'
+    >
+      <slot />
+    </article>
+  </div>
+</MainLayout>

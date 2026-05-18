@@ -1,0 +1,63 @@
+---
+import { formatDate } from '@/utils/formatDate';
+import { getReadingTime, formatReadingTime } from '@/utils/getReadingTime';
+import type { BlogPost } from '@/utils/posts';
+
+interface Props {
+  post: BlogPost;
+  content?: string;
+  showAuthor?: boolean;
+  showReadingTime?: boolean;
+  class?: string;
+}
+
+const {
+  post,
+  content,
+  showAuthor = true,
+  showReadingTime = true,
+  class: className = '',
+} = Astro.props;
+
+const { date, author } = post.data;
+const readingTime =
+  showReadingTime && content !== undefined ? getReadingTime(content) : null;
+---
+
+<dl class={`flex flex-wrap items-center text-sm text-slate-400 gap-x-4 gap-y-1 ${className}`}>
+  {
+    showAuthor && (
+      <div class='flex items-center space-x-1'>
+        <dt class='sr-only'>作者</dt>
+        <dd style={`view-transition-name: post-author-${post.slug}`}>
+          {author}
+        </dd>
+      </div>
+    )
+  }
+  {showAuthor && <span aria-hidden='true'>•</span>}
+  <div class='flex items-center space-x-1'>
+    <dt class='sr-only'>發布日期</dt>
+    <dd>
+      <time
+        datetime={date.toISOString()}
+        style={`view-transition-name: post-date-${post.slug}`}
+      >
+        {formatDate(date)}
+      </time>
+    </dd>
+  </div>
+  {
+    readingTime !== null && (
+      <>
+        <span aria-hidden='true'>•</span>
+        <div class='flex items-center space-x-1'>
+          <dt class='sr-only'>閱讀時間</dt>
+          <dd style={`view-transition-name: post-reading-time-${post.slug}`}>
+            {formatReadingTime(readingTime)}
+          </dd>
+        </div>
+      </>
+    )
+  }
+</dl>
